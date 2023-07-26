@@ -23,3 +23,14 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add('openHomePage', () =>
+{
+    cy.visit('/')
+})
+
+Cypress.Commands.add('verifyUrlAndTitlePage', (url, title) =>
+{
+    //verify if the page title is correct
+    cy.url().should("include", "/"+url);
+    cy.get("h1.heading1").should("contain", title);
+})

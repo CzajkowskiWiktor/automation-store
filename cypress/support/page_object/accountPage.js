@@ -88,6 +88,29 @@ export class AccountPage {
     cy.get("#customernav").trigger("mouseover");
     cy.get("li.open").find(".dropdown-menu").contains("a", "Logoff").click();
   }
+
+  goToAddressBookSidebar() {
+    cy.get(".dash-tile-ocean").find(".dash-tile-header").find(".btn").click();
+  }
+
+  goToAddressBookNavbar() {
+    cy.get("#customernav").trigger("mouseover");
+    cy.get("li.open")
+      .find(".dropdown-menu")
+      .contains("a", "Manage Address Book")
+      .click();
+  }
+
+  goToAddressBookIcon() {
+    cy.get(".nav-dash").find();
+  }
+
+  checkPathContentToAccount() {
+    cy.get(".breadcrumb")
+      .find("li")
+      .should("contain", "Account")
+      .and("have.length", 2);
+  }
 }
 
 export const onAccountPage = new AccountPage();

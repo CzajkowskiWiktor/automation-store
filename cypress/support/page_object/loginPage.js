@@ -5,84 +5,87 @@
 //     cy.get("h1.heading1").should("contain", title);
 // }
 
-export class LoginPage{
-    verifyLoginPageTitle() {
-        //verify if the page title is correct
-        // cy.url().should("include", "/login");
-        // cy.get("h1.heading1").should("contain", "Account Login");
-        cy.verifyUrlAndTitlePage("login", "Account Login")
-      }
-    
-      getAndClickToRegisterForm(){
-        //get the register form
-        cy.get(".newcustomer").then((form) => {
-            //verify the heading of register form
-            cy.wrap(form).find(".heading2").should("contain", "I am a new customer");
-            //checkout register option checked
-            cy.wrap(form).find("#accountFrm_accountregister").should("be.checked");
-            //click continue button
-            cy.wrap(form).find('[title="Continue"]').click();
-          });
-      }
+export class LoginPage {
+  verifyLoginPageTitle() {
+    //verify if the page title is correct
+    // cy.url().should("include", "/login");
+    // cy.get("h1.heading1").should("contain", "Account Login");
+    cy.verifyUrlAndTitlePage("login", "Account Login");
+  }
 
-      loginToAccount(login, password){
-        cy.get('.returncustomer').then(form =>
-        {
-          cy.wrap(form).find('#loginFrm_loginname').type(login)
-          cy.wrap(form).find('#loginFrm_password').type(password)
-          //check if inputs are not empty
-          cy.wrap(form).find('#loginFrm_loginname').should('have.value', login)
-          cy.wrap(form).find('#loginFrm_password').should('have.value', password)
-          //click login btn
-          cy.wrap(form).find('[type="submit"]').click()
-        })
-      }
+  getAndClickToRegisterForm() {
+    //get the register form
+    cy.get(".newcustomer").then((form) => {
+      //verify the heading of register form
+      cy.wrap(form).find(".heading2").should("contain", "I am a new customer");
+      //checkout register option checked
+      cy.wrap(form).find("#accountFrm_accountregister").should("be.checked");
+      //click continue button
+      cy.wrap(form).find('[title="Continue"]').click();
+    });
+  }
 
-      checkLoginFormTitleAndText(){
-        cy.get('.returncustomer').then(form =>
-        {
-          cy.wrap(form).find('.heading2').should('contain','Returning Customer')
-          cy.wrap(form).find('.heading4').should('contain', 'I am a returning customer')
-        })
-      }
+  loginToAccount(login, password) {
+    cy.get(".returncustomer").then((form) => {
+      cy.wrap(form).find("#loginFrm_loginname").type(login);
+      cy.wrap(form).find("#loginFrm_password").type(password);
+      //check if inputs are not empty
+      cy.wrap(form).find("#loginFrm_loginname").should("have.value", login);
+      cy.wrap(form).find("#loginFrm_password").should("have.value", password);
+      //click login btn
+      cy.wrap(form).find('[type="submit"]').click();
+    });
+  }
 
-      clickForgotPasswordLink(){
-        cy.get('.returncustomer').contains('a', 'Forgot your password?').click();
-      }
+  checkLoginFormTitleAndText() {
+    cy.get(".returncustomer").then((form) => {
+      cy.wrap(form).find(".heading2").should("contain", "Returning Customer");
+      cy.wrap(form)
+        .find(".heading4")
+        .should("contain", "I am a returning customer");
+    });
+  }
 
-      clickForgotLoginLink(){
-        cy.get('.returncustomer').contains('a', 'Forgot your login?').click();
-      }
+  clickForgotPasswordLink() {
+    cy.get(".returncustomer").contains("a", "Forgot your password?").click();
+  }
 
-      successMessageOfResetingAccData(msg){
-        cy.get('div.alert-success').should('contain', msg)
-      }
+  clickForgotLoginLink() {
+    cy.get(".returncustomer").contains("a", "Forgot your login?").click();
+  }
 
-      clearLoginInputs(){
-        cy.get('.returncustomer').then(form =>
-          {
-            cy.wrap(form).find('#loginFrm_loginname').clear()
-            cy.wrap(form).find('#loginFrm_password').clear()
-          })
-      }
+  successMessageOfResetingAccData(msg) {
+    cy.get("div.alert-success").should("contain", msg);
+  }
 
-      verifyErrorLoginMessage(){
-        cy.get('div.alert-error').should('contain', 'Error: Incorrect login or password provided.')
-      }
+  clearLoginInputs() {
+    cy.get(".returncustomer").then((form) => {
+      cy.wrap(form).find("#loginFrm_loginname").clear();
+      cy.wrap(form).find("#loginFrm_password").clear();
+    });
+  }
 
-      checkLoginNameInputEmptyValue(login){
-        cy.get(".returncustomer").find('#loginFrm_loginname').should('not.have.value', '').and('have.value', login)
-      }
+  verifyErrorLoginMessage() {
+    cy.get("div.alert-error").should(
+      "contain",
+      "Error: Incorrect login or password provided."
+    );
+  }
 
-      checkPasswordInputEmptyValue(){
-        cy.get(".returncustomer").find('#loginFrm_password').should('be.empty')
+  checkLoginNameInputEmptyValue(login) {
+    cy.get(".returncustomer")
+      .find("#loginFrm_loginname")
+      .should("not.have.value", "")
+      .and("have.value", login);
+  }
 
-      }
+  checkPasswordInputEmptyValue() {
+    cy.get(".returncustomer").find("#loginFrm_password").should("be.empty");
+  }
 
-      clickCloseErrorMessageBtn(){
-        cy.get('.alert-error').find('button').click()
-    }
-
+  clickCloseErrorMessageBtn() {
+    cy.get(".alert-error").find("button").click();
+  }
 }
 
-export const onLoginPage = new LoginPage()
+export const onLoginPage = new LoginPage();

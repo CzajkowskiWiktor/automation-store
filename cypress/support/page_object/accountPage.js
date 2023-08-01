@@ -102,7 +102,25 @@ export class AccountPage {
   }
 
   goToAddressBookIcon() {
-    cy.get(".nav-dash").find();
+    cy.get(".nav-dash")
+      .find('[data-original-title="Manage Address Book"]')
+      .click();
+  }
+
+  goToPasswordChangeSidebar() {
+    cy.get(".side_account_list").contains("a", "Change password").click();
+  }
+
+  goToPasswordChangeNavbar() {
+    cy.get("#customernav").trigger("mouseover");
+    cy.get("li.open")
+      .find(".dropdown-menu")
+      .contains("a", "Change password")
+      .click();
+  }
+
+  goToPasswordChangeIcon() {
+    cy.get(".nav-dash").find('[data-original-title="Change password"]').click();
   }
 
   checkPathContentToAccount() {
@@ -110,6 +128,10 @@ export class AccountPage {
       .find("li")
       .should("contain", "Account")
       .and("have.length", 2);
+  }
+
+  verifySuccessMessage(msg) {
+    cy.get(".alert-success").should("contain", msg);
   }
 }
 

@@ -84,6 +84,18 @@ export class AddressPage {
       .find('[title="Delete"]')
       .click();
   }
+
+  checkDefaultAddress(firstname, lastname){
+    cy.get(".contentpanel")
+      .find(".genericbox")
+      .contains("table", "Delete")
+      .find("td")
+      .not(".pull-right")
+      .should(
+        "contain",
+        firstname + " " + lastname
+      )
+  }
 }
 
 export const onAddressPage = new AddressPage();

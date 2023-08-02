@@ -133,6 +133,36 @@ export class AccountPage {
   verifySuccessMessage(msg) {
     cy.get(".alert-success").should("contain", msg);
   }
+
+  checkWishlistIcon() {
+    cy.get(".nav-dash")
+      .find('[data-original-title="My wish list"]')
+      .as("wishlistbadge");
+    cy.get("@wishlistbadge").find("i").should("have.class", "fa-star");
+  }
+
+  checkWishlistAmount(amount) {
+    cy.get(".nav-dash")
+      .find('[data-original-title="My wish list"]')
+      .as("wishlistbadge");
+    cy.get("@wishlistbadge").find(".badge-success").should("have.text", amount);
+  }
+
+  goToWishlistSidebar() {
+    cy.get(".side_account_list").contains("a", "My wish list").click();
+  }
+
+  goToWishlistNavbar() {
+    cy.get("#customernav").trigger("mouseover");
+    cy.get("li.open")
+      .find(".dropdown-menu")
+      .contains("a", "My wish list")
+      .click();
+  }
+
+  goToWishlistIcon() {
+    cy.get(".nav-dash").find('[data-original-title="My wish list"]').click();
+  }
 }
 
 export const onAccountPage = new AccountPage();

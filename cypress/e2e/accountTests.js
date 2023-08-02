@@ -5,10 +5,37 @@ import { onAddressPage } from "../support/page_object/addressPage";
 import { onAddNewAddressPage } from "../support/page_object/addNewAddressPage";
 import { onEditAddressPage } from "../support/page_object/editAddressPage";
 import { onChangePasswordPage } from "../support/page_object/changePasswordPage";
+import { onWishList } from "../support/page_object/wishList";
+import { onProductPage } from "../support/page_object/productPage";
 import { navigateTo } from "../support/page_object/navigationPage";
 
 describe("Testing on user account page", () => {
   let globalData;
+
+  const newAddressUser = {
+    firstname: "Test",
+    lastname: "Lorem",
+    address1: "al. Niepodleglosci 12",
+    city: "Poznan",
+    postcode: "61-120",
+    country: "Poland",
+    zone: "Wielkopolskie",
+  };
+
+  const userWithHistory = {
+    firstname: "Lorem",
+    lastname: "Ipsum",
+    address1: "ul. Hiacynta 1a",
+    city: "Wrzesnia",
+    postcode: "69-120",
+    country: "Poland",
+    zone: "Wielkopolskie",
+    company: "Comapny 1",
+    telephone: 245678901,
+    login: "lorem1234",
+    password: "test123",
+    email: "testLorem123@test.com",
+  };
 
   beforeEach("open a website and login to account", () => {
     //assign global data
@@ -42,15 +69,6 @@ describe("Testing on user account page", () => {
   });
 
   it("add another address to account", () => {
-    const newAddressUser = {
-      firstname: "Test",
-      lastname: "Lorem",
-      address1: "al. Niepodleglosci 12",
-      city: "Poznan",
-      postcode: "61-120",
-      country: "Poland",
-      zone: "Wielkopolskie",
-    };
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -82,15 +100,6 @@ describe("Testing on user account page", () => {
   });
 
   it("Delete a non default address", () => {
-    const newAddressUser = {
-      firstname: "Test",
-      lastname: "Lorem",
-      address1: "al. Niepodleglosci 12",
-      city: "Poznan",
-      postcode: "61-120",
-      country: "Poland",
-      zone: "Wielkopolskie",
-    };
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -121,15 +130,6 @@ describe("Testing on user account page", () => {
   });
 
   it("edit a new added another address", () => {
-    const newAddressUser = {
-      firstname: "Test",
-      lastname: "Lorem",
-      address1: "al. Niepodleglosci 12",
-      city: "Poznan",
-      postcode: "61-120",
-      country: "Poland",
-      zone: "Wielkopolskie",
-    };
     const editedAddressUser = {
       firstname: "Test",
       lastname: "Lorem",
@@ -172,15 +172,6 @@ describe("Testing on user account page", () => {
   });
 
   it("failed adding another address due to missing required inputs - last name and city", () => {
-    const newAddressUser = {
-      firstname: "Test",
-      // lastname: "Lorem",
-      address1: "al. Niepodleglosci 12",
-      // city: "Poznan",
-      postcode: "61-120",
-      country: "Poland",
-      zone: "Wielkopolskie",
-    };
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -207,15 +198,6 @@ describe("Testing on user account page", () => {
   });
 
   it("change new added address to deafult one", () => {
-    const newAddressUser = {
-        firstname: "Test",
-        lastname: "Lorem",
-        address1: "al. Niepodleglosci 12",
-        city: "Poznan",
-        postcode: "61-120",
-        country: "Poland",
-        zone: "Wielkopolskie",
-      };
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -225,15 +207,17 @@ describe("Testing on user account page", () => {
     onAddressPage.checkUrlAndTitlePage();
     onAddressPage.clickAddNewAddressBtn();
     onAddNewAddressPage.checkUrlAndTitlePage();
-      onAddNewAddressPage.addNewAddress(newAddressUser);
-      onAddNewAddressPage.changeAddressToDefault();
-      onAddNewAddressPage.clickContinueBtnToAddNewAddress();
-      onAddressPage.verifySuccessMessage(
-        "Your address has been successfully inserted"
-      );
-      //check if previous address changed to non default
-      onAddressPage.checkDefaultAddress(globalData.firstname, globalData.lastname)
-    
+    onAddNewAddressPage.addNewAddress(newAddressUser);
+    onAddNewAddressPage.changeAddressToDefault();
+    onAddNewAddressPage.clickContinueBtnToAddNewAddress();
+    onAddressPage.verifySuccessMessage(
+      "Your address has been successfully inserted"
+    );
+    //check if previous address changed to non default
+    onAddressPage.checkDefaultAddress(
+      globalData.firstname,
+      globalData.lastname
+    );
   });
 
   it("change user password", () => {
@@ -245,12 +229,18 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillTheCompleteForm(globalData.password, 'test1234', 'test1234')
+    onChangePasswordPage.fillTheCompleteForm(
+      globalData.password,
+      "test1234",
+      "test1234"
+    );
     onChangePasswordPage.clickContinueBtnToChangePassword();
-    onAccountPage.verifySuccessMessage('Success: Your password has been successfully updated.')
+    onAccountPage.verifySuccessMessage(
+      "Success: Your password has been successfully updated."
+    );
   });
 
-  it('Fail with changing password - incorrect current password', () => {
+  it("Fail with changing password - incorrect current password", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -259,14 +249,18 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillTheCompleteForm('tesy123', 'test1234', 'test1234')
+    onChangePasswordPage.fillTheCompleteForm("tesy123", "test1234", "test1234");
     onChangePasswordPage.clickContinueBtnToChangePassword();
-    onChangePasswordPage.verifyErrorMessage('Oops, there is an error with information provided!')
-    onChangePasswordPage.checkCurrentPasswordError('Your current password is incorrect! Please try again.')
-    onChangePasswordPage.checkAmountOfInputErrors(1)
+    onChangePasswordPage.verifyErrorMessage(
+      "Oops, there is an error with information provided!"
+    );
+    onChangePasswordPage.checkCurrentPasswordError(
+      "Your current password is incorrect! Please try again."
+    );
+    onChangePasswordPage.checkAmountOfInputErrors(1);
   });
 
-  it('Fail with changing password - incorrect new password', () => {
+  it("Fail with changing password - incorrect new password", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -275,15 +269,21 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillTheCompleteForm('test123', 'te', 'test1234')
+    onChangePasswordPage.fillTheCompleteForm("test123", "te", "test1234");
     onChangePasswordPage.clickContinueBtnToChangePassword();
-    onChangePasswordPage.verifyErrorMessage('Oops, there is an error with information provided!')
-    onChangePasswordPage.checkNewPasswordError('Password must be between 4 and 20 characters!')
-    onChangePasswordPage.checkNewPasswordConfirmError('Password confirmation does not match password!')
-    onChangePasswordPage.checkAmountOfInputErrors(2)
+    onChangePasswordPage.verifyErrorMessage(
+      "Oops, there is an error with information provided!"
+    );
+    onChangePasswordPage.checkNewPasswordError(
+      "Password must be between 4 and 20 characters!"
+    );
+    onChangePasswordPage.checkNewPasswordConfirmError(
+      "Password confirmation does not match password!"
+    );
+    onChangePasswordPage.checkAmountOfInputErrors(2);
   });
 
-  it('Fail with changing password - lack of new password confirm', () => {
+  it("Fail with changing password - lack of new password confirm", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -292,15 +292,19 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillCurrentPassword('test123')
-    onChangePasswordPage.fillNewPassword('test1234')
+    onChangePasswordPage.fillCurrentPassword("test123");
+    onChangePasswordPage.fillNewPassword("test1234");
     onChangePasswordPage.clickContinueBtnToChangePassword();
-    onChangePasswordPage.verifyErrorMessage('Oops, there is an error with information provided!')
-    onChangePasswordPage.checkNewPasswordConfirmError('Password confirmation does not match password!')
-    onChangePasswordPage.checkAmountOfInputErrors(1)
+    onChangePasswordPage.verifyErrorMessage(
+      "Oops, there is an error with information provided!"
+    );
+    onChangePasswordPage.checkNewPasswordConfirmError(
+      "Password confirmation does not match password!"
+    );
+    onChangePasswordPage.checkAmountOfInputErrors(1);
   });
 
-  it('Fail with changing password - not providing any password', () => {
+  it("Fail with changing password - not providing any password", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(globalData.login, globalData.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -310,18 +314,100 @@ describe("Testing on user account page", () => {
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
     onChangePasswordPage.clickContinueBtnToChangePassword();
-    onChangePasswordPage.verifyErrorMessage('Oops, there is an error with information provided!')
-    onChangePasswordPage.checkCurrentPasswordError('Your current password is incorrect! Please try again.')
-    onChangePasswordPage.checkNewPasswordError('Password must be between 4 and 20 characters!')
-    onChangePasswordPage.checkAmountOfInputErrors(2)
+    onChangePasswordPage.verifyErrorMessage(
+      "Oops, there is an error with information provided!"
+    );
+    onChangePasswordPage.checkCurrentPasswordError(
+      "Your current password is incorrect! Please try again."
+    );
+    onChangePasswordPage.checkNewPasswordError(
+      "Password must be between 4 and 20 characters!"
+    );
+    onChangePasswordPage.checkAmountOfInputErrors(2);
   });
 
-  it.only("check the user wish list", () => {
+  it("check the user wishlist", () => {
+    let wishlistAmount = 3;
+    let totalPriceOfItems = 216;
+    let itemPrices = ["$26.00", "$85.00", "$105.00"];
+    let itemNames = [
+      "New Ladies High Wedge Heel Toe Thong Diamante Flip Flop Sandals",
+      "New French With Ease (1 book + 1 mp3 CD)",
+      "Gucci Guilty",
+    ];
+
     navigateTo.loginOrRegister();
-    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
-    onAccountPage.verifyCustomerNameOnPage(globalData.firstname);
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
     onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkWishlistIcon();
+    onAccountPage.checkWishlistAmount(wishlistAmount);
+    // onAccountPage.goToWishlistIcon();
+    onAccountPage.goToWishlistNavbar();
+    // onAccountPage.goToWishlistSidebar();
+    onWishList.checkUrlAndTitlePage();
+    onWishList.checkPathContentToWishlist();
+    onWishList.checkSelectedOptionInSidebarlist();
+    //check items quantity in table
+    onWishList.checkItemsAmountInWishlistTable(wishlistAmount);
+    //check item names
+    onWishList.checkItemNames(itemNames);
+    //check item prices
+    onWishList.checkItemPrices(itemPrices);
+    //check total items price
+    onWishList.checkTotalPriceOfItems(totalPriceOfItems);
+  });
+
+  it("delete an item from wishlist", () => {
+    let wishlistAmount = 3;
+    let itemName = "New French With Ease (1 book + 1 mp3 CD)";
+
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkWishlistIcon();
+    onAccountPage.checkWishlistAmount(wishlistAmount);
+    // onAccountPage.goToWishlistIcon();
+    onAccountPage.goToWishlistNavbar();
+    // onAccountPage.goToWishlistSidebar();
+    onWishList.checkUrlAndTitlePage();
+    onWishList.checkPathContentToWishlist();
+    onWishList.checkSelectedOptionInSidebarlist();
+    //check items quantity in table
+    onWishList.checkItemsAmountInWishlistTable(wishlistAmount);
+    //delete an item with particular name
+    onWishList.deleteARowWithSpecificItemName(itemName);
+    //check updated list of wishlist items
+    onWishList.checkItemsAmountInWishlistTable(2);
+  });
+
+  it.only("add to cart an item from wishlist", () => {
+    let wishlistAmount = 3;
+    let itemPrice = "$105.00";
+    let itemName = "Gucci Guilty";
+
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkWishlistIcon();
+    onAccountPage.checkWishlistAmount(wishlistAmount);
+    onAccountPage.goToWishlistIcon();
+    //   onAccountPage.goToWishlistNavbar();
+    // onAccountPage.goToWishlistSidebar();
+    onWishList.checkUrlAndTitlePage();
+    onWishList.checkPathContentToWishlist();
+    onWishList.checkSelectedOptionInSidebarlist();
+    //check items quantity in table
+    onWishList.checkItemsAmountInWishlistTable(wishlistAmount);
+    //add to cart an item
+    onWishList.addToCarARowWithSpecificItemName(itemName);
+    onProductPage.checkUrl();
+    onProductPage.checkProductName(itemName);
   });
 
   it("check user order history", () => {});

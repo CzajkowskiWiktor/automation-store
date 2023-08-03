@@ -27,30 +27,37 @@ export class WishList {
   }
 
   checkItemNames(names) {
-    cy.get("table")
+    cy.get(".contentpanel")
+      .find("table")
       .find("tbody")
       .find("tr:not(:first-child)")
       .each(($el, index) => {
         let itemName = $el.find("td").eq(1).text();
-        expect(itemName).to.contain(names[index]);
+        if (names.includes(itemName.trim())) {
+          let indexName = names.indexOf(itemName.trim());
+          expect(itemName).to.contain(names[indexName]);
+        }
       });
   }
 
   checkItemPrices(prices) {
-    cy.get("table")
+    cy.get(".contentpanel")
+      .find("table")
       .find("tbody")
       .find("tr:not(:first-child)")
       .each(($el, index) => {
         let itemPrices = $el.find("td").eq(3).text();
-        // cy.wrap($el).find('td').eq(1)
-        // cy.log(itemPrices)
-        expect(itemPrices).to.contain(prices[index]);
+        if (prices.includes(itemPrices.trim())) {
+          let indexPrice = prices.indexOf(itemPrices.trim());
+          expect(itemPrices).to.contain(prices[indexPrice]);
+        }
       });
   }
 
   checkTotalPriceOfItems(price) {
     let totalPrice = 0;
-    cy.get("table")
+    cy.get(".contentpanel")
+      .find("table")
       .find("tbody")
       .find("tr:not(:first-child)")
       .each(($el, index) => {

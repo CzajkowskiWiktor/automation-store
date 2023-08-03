@@ -15,6 +15,10 @@ export class ProductPage {
   checkProductName(name) {
     cy.get("h1.productname").should("contain", name);
   }
+
+  checkProductPrice(price){
+    cy.get('.productfilneprice').should('contain', price)
+  }
 }
 
 export const onProductPage = new ProductPage();

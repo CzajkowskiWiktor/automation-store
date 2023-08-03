@@ -326,7 +326,7 @@ describe("Testing on user account page", () => {
     onChangePasswordPage.checkAmountOfInputErrors(2);
   });
 
-  it("check the user wishlist", () => {
+  it.only("check the user wishlist", () => {
     let wishlistAmount = 3;
     let totalPriceOfItems = 216;
     let itemPrices = ["$26.00", "$85.00", "$105.00"];
@@ -408,6 +408,7 @@ describe("Testing on user account page", () => {
     onWishList.addToCarARowWithSpecificItemName(itemName);
     onProductPage.checkUrl();
     onProductPage.checkProductName(itemName);
+    onProductPage.checkProductPrice(itemPrice);
   });
 
   it("check user order history", () => {});

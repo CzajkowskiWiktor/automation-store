@@ -7,6 +7,8 @@ import { onEditAddressPage } from "../support/page_object/editAddressPage";
 import { onChangePasswordPage } from "../support/page_object/changePasswordPage";
 import { onWishList } from "../support/page_object/wishList";
 import { onProductPage } from "../support/page_object/productPage";
+import { onOrderHistoryPage } from "../support/page_object/orderHistoryPage";
+import { onOrderDetailsPage } from "../support/page_object/orderDetailsPage";
 import { navigateTo } from "../support/page_object/navigationPage";
 
 describe("Testing on user account page", () => {
@@ -326,7 +328,7 @@ describe("Testing on user account page", () => {
     onChangePasswordPage.checkAmountOfInputErrors(2);
   });
 
-  it.only("check the user wishlist", () => {
+  it("check the user wishlist", () => {
     let wishlistAmount = 3;
     let totalPriceOfItems = 216;
     let itemPrices = ["$26.00", "$85.00", "$105.00"];
@@ -384,7 +386,7 @@ describe("Testing on user account page", () => {
     onWishList.checkItemsAmountInWishlistTable(2);
   });
 
-  it.only("add to cart an item from wishlist", () => {
+  it("add to cart an item from wishlist", () => {
     let wishlistAmount = 3;
     let itemPrice = "$105.00";
     let itemName = "Gucci Guilty";
@@ -411,17 +413,201 @@ describe("Testing on user account page", () => {
     onProductPage.checkProductPrice(itemPrice);
   });
 
-  it("check user order history", () => {});
+  it("check user order history", () => {
+    let orderQuantity = 5;
+    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderDateAdded = "08/01/2023";
+    let productsQuantity = [1, 1, 1, 1, 2];
 
-  it("edit account details", () => {});
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkOrderAmount(orderQuantity);
+    onAccountPage.goToOrderHistorySidebar();
+    onOrderHistoryPage.checkUrlAndTitlePage();
+    onOrderHistoryPage.checkPathContentToOrderHistory();
+    onOrderHistoryPage.checkSelectedOptionInSidebarlist();
+    //check orders quantity on page
+    onOrderHistoryPage.checkOrdersQuantity(orderQuantity);
+    //check orders IDs
+    onOrderHistoryPage.checkOrderID(orderIds);
+    //check orders status
+    onOrderHistoryPage.checkOrderStatus(orderStatus);
+    //check orders customer name
+    onOrderHistoryPage.checkOrderCustomerName(
+      userWithHistory.firstname + " " + userWithHistory.lastname
+    );
+    //check orders total
+    onOrderHistoryPage.checkOrderTotals(orderTotals);
+    //check orders date added
+    onOrderHistoryPage.checkOrderDateAdded(orderDateAdded);
+    //check orders products quantity
+    onOrderHistoryPage.checkOrderProductsQuantity(productsQuantity);
+  });
 
-  it("check user transaction history", () => {});
+  it("view order details history on specific orderID", () => {
+    let orderQuantity = 5;
+    let number = 4;
+    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderDateAdded = "08/01/2023";
+    let productsQuantity = [1, 1, 1, 1, 2];
+    let eachProductOrderedQuantity = [1, 1, 1, 1, [1,1]];
+    let productNames = [
+      "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+      "Viva Glam Lipstick",
+      "Creme Precieuse Nuit 50ml",
+      "Calvin Klein Obsession For Women EDP Spray",
+      [
+        "Waterproof Protective Undereye Concealer",
+        "Designer Men Casual Formal Double Cuffs Grandad Band Collar Shirt Elegant Tie",
+      ],
+    ];
+    let productPrice = ["42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
 
-  it("check downloads page", () => {});
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkOrderAmount(orderQuantity);
+    onAccountPage.goToOrderHistorySidebar();
+    onOrderHistoryPage.checkUrlAndTitlePage();
+    onOrderHistoryPage.checkPathContentToOrderHistory();
+    onOrderHistoryPage.checkSelectedOptionInSidebarlist();
+    //click on view order button
+    onOrderHistoryPage.clickViewOrderOnSpecificOrderID(orderIds[number]);
+    //verify order details on OrderDetails page
+    onOrderDetailsPage.checkUrlAndTitlePage(orderIds[number]);
+    onOrderDetailsPage.checkPathContentToOrderDetails();
+    onOrderDetailsPage.checkNotSelectedOptionInSidebarlist();
+    onOrderDetailsPage.checkOrderDetails(
+      orderIds[number],
+      orderStatus[number],
+      userWithHistory
+    );
+    onOrderDetailsPage.checkOrderHistoryDetails(
+      orderDateAdded,
+      orderStatus[number]
+    );
+    onOrderDetailsPage.checkProductDetailsOnOrder(
+      productNames[number],
+      productsQuantity[number],
+      productPrice[number],
+      eachProductOrderedQuantity[number]
+    );
+    onOrderDetailsPage.checkTotalWithTaxRatePrice(
+      productPrice[number],
+      orderTotals[number]
+    );
+    //go back to order history
+    // onOrderDetailsPage.clickContinueBtn()
+  });
 
-  it("verify checked notifications and newsletter", () => {});
+  it("Print the order invoice from order details", () => {
+    let orderQuantity = 5;
+    let number = 2;
+    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderDateAdded = "08/01/2023";
+    let productsQuantity = [1, 1, 1, 1, 2];
+    let eachProductOrderedQuantity = [1, 1, 1, 1, [1,1]];
+    let productNames = [
+      "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+      "Viva Glam Lipstick",
+      "Creme Precieuse Nuit 50ml",
+      "Calvin Klein Obsession For Women EDP Spray",
+      [
+        "Waterproof Protective Undereye Concealer",
+        "Designer Men Casual Formal Double Cuffs Grandad Band Collar Shirt Elegant Tie",
+      ],
+    ];
+    let productPrice = ["42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
 
-  it("uncheck newsletter notification for user", () => {});
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkOrderAmount(orderQuantity);
+    onAccountPage.goToOrderHistorySidebar();
+    onOrderHistoryPage.checkUrlAndTitlePage();
+    onOrderHistoryPage.checkPathContentToOrderHistory();
+    onOrderHistoryPage.checkSelectedOptionInSidebarlist();
+    //click on view order button
+    onOrderHistoryPage.clickViewOrderOnSpecificOrderID(orderIds[number]);
+    //verify order details on OrderDetails page
+    onOrderDetailsPage.checkUrlAndTitlePage(orderIds[number]);
+    onOrderDetailsPage.checkPathContentToOrderDetails();
+    onOrderDetailsPage.checkNotSelectedOptionInSidebarlist();
+    onOrderDetailsPage.checkOrderDetails(
+      orderIds[number],
+      orderStatus[number],
+      userWithHistory
+    );
+    onOrderDetailsPage.checkOrderHistoryDetails(
+      orderDateAdded,
+      orderStatus[number]
+    );
+    onOrderDetailsPage.checkProductDetailsOnOrder(
+      productNames[number],
+      productsQuantity[number],
+      productPrice[number],
+      eachProductOrderedQuantity[number]
+    );
+    onOrderDetailsPage.checkTotalWithTaxRatePrice(
+      productPrice[number],
+      orderTotals[number]
+    );
+    //print the order
+    onOrderDetailsPage.clickPrintBtnAndVerify()
+  });
+
+  it("edit account details", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+  });
+
+  it.only("check user transaction history", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+  });
+
+  it("check downloads page", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+  });
+
+  it("verify checked notifications and newsletter", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+  });
+
+  it("uncheck newsletter notification for user", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+  });
 
   it("buy a product and check order and transaction history", () => {});
 });

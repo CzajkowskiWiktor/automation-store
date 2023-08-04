@@ -163,6 +163,29 @@ export class AccountPage {
   goToWishlistIcon() {
     cy.get(".nav-dash").find('[data-original-title="My wish list"]').click();
   }
+
+  goToOrderHistorySidebar() {
+    cy.get(".side_account_list").contains("a", "Order history").click();
+  }
+
+  goToOrderHistoryNavbar() {
+    cy.get("#customernav").trigger("mouseover");
+    cy.get("li.open")
+      .find(".dropdown-menu")
+      .contains("a", "Order history")
+      .click();
+  }
+
+  goToOrderHistoryIcon() {
+    cy.get(".nav-dash").find('[data-original-title="Order history"]').click();
+  }
+
+  checkOrderAmount(amount) {
+    cy.get(".nav-dash")
+      .find('[data-original-title="Order history"]')
+      .as("orderbadge");
+    cy.get("@orderbadge").find(".badge-success").should("have.text", amount);
+  }
 }
 
 export const onAccountPage = new AccountPage();

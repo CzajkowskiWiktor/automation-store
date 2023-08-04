@@ -9,6 +9,9 @@ import { onWishList } from "../support/page_object/wishList";
 import { onProductPage } from "../support/page_object/productPage";
 import { onOrderHistoryPage } from "../support/page_object/orderHistoryPage";
 import { onOrderDetailsPage } from "../support/page_object/orderDetailsPage";
+import { onTransactionHistoryPage } from "../support/page_object/transactionHistoryPage";
+import { onDownloadPage } from "../support/page_object/downloadPage";
+import { onNotificationsPage } from "../support/page_object/notificationsPage";
 import { navigateTo } from "../support/page_object/navigationPage";
 
 describe("Testing on user account page", () => {
@@ -569,45 +572,86 @@ describe("Testing on user account page", () => {
     onOrderDetailsPage.clickPrintBtnAndVerify()
   });
 
-  it("edit account details", () => {
+  it("check user non transaction history", () => {
+    let transAmount = '$0.00'
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
     onAccountPage.checkPathContentToAccount();
-  });
-
-  it.only("check user transaction history", () => {
-    navigateTo.loginOrRegister();
-    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
-    onAccountPage.checkUrlAndTitlePage();
-    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
-    onAccountPage.checkPathContentToAccount();
+    onAccountPage.checkTransactionHistoryAmountIcon(transAmount)
+    onAccountPage.checkTransactionHistoryAmountCard(transAmount)
+    onAccountPage.goToTransactionHistoryNavbar();
+    onTransactionHistoryPage.checkUrlAndTitlePage();
+    onTransactionHistoryPage.checkPathContentToTransactionHistory();
+    onTransactionHistoryPage.checkSelectedOptionInSidebarlist();
+    onTransactionHistoryPage.verifyNoTransactionHistoryRecords();
   });
 
   it("check downloads page", () => {
+    let downloadQuantity = 0;
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.getDownloadsAmount(downloadQuantity);
+    onAccountPage.checkDownloadsAmountIcon(downloadQuantity);
+    onAccountPage.goToDownloadIcon();
+    onDownloadPage.checkUrlAndTitlePage();
+    onDownloadPage.checkSelectedOptionInSidebarlist();
+    onDownloadPage.checkPathContentToDownload();
+    onDownloadPage.verifyNoDownloadsRecords();
+  });
+
+  it("verify checked notifications and newsletter - newsletter unchecked", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.goToNotificationsIcon();
+    onNotificationsPage.checkUrlAndTitlePage();
+    onNotificationsPage.checkPathContentToNotifications();
+    onNotificationsPage.checkSelectedOptionInSidebarlist();
+    onNotificationsPage.verifyStatusOfNotificationsCheckboxes();
+  });
+
+  it("check and save newsletter notification for user", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.goToNotificationsIcon();
+    onNotificationsPage.checkUrlAndTitlePage();
+    onNotificationsPage.checkPathContentToNotifications();
+    onNotificationsPage.checkSelectedOptionInSidebarlist();
+    onNotificationsPage.selectNewslettersCheckbox();
+    onNotificationsPage.clickContinueBtn();
+    onAccountPage.verifySuccessMessage('Success: Your notification settings has been successfully updated!')
+  });
+
+  it('uncheck and save newsletter notification for user', () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.goToNotificationsIcon();
+    onNotificationsPage.checkUrlAndTitlePage();
+    onNotificationsPage.checkPathContentToNotifications();
+    onNotificationsPage.checkSelectedOptionInSidebarlist();
+    onNotificationsPage.unselectNewslettersCheckbox();
+    onNotificationsPage.clickContinueBtn();
+    onAccountPage.verifySuccessMessage('Success: Your notification settings has been successfully updated!')
+  });
+
+  it.only("edit account details", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
     onAccountPage.checkPathContentToAccount();
   });
-
-  it("verify checked notifications and newsletter", () => {
-    navigateTo.loginOrRegister();
-    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
-    onAccountPage.checkUrlAndTitlePage();
-    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
-    onAccountPage.checkPathContentToAccount();
-  });
-
-  it("uncheck newsletter notification for user", () => {
-    navigateTo.loginOrRegister();
-    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
-    onAccountPage.checkUrlAndTitlePage();
-    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
-    onAccountPage.checkPathContentToAccount();
-  });
-
-  it("buy a product and check order and transaction history", () => {});
 });

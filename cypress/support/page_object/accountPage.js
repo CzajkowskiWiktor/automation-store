@@ -1,30 +1,41 @@
 /// <reference types="Cypress" />
 
+function goToThroughIcon(name) {
+  cy.get(".nav-dash")
+    .find('[data-original-title="' + name + '"]')
+    .click();
+}
+
+function goToThroughSidebar(name) {
+  cy.get(".side_account_list").contains("a", name).click();
+}
+
+function goToThroughNavbar(name) {
+  cy.get("#customernav").trigger("mouseover");
+  cy.get("li.open").find(".dropdown-menu").contains("a", name).click();
+}
+
+function checkQuantityOfElementsIcon(elementName, amount) {
+  cy.get(".nav-dash")
+    .find('[data-original-title="' + elementName + '"]')
+    .find(".badge-success")
+    .should("have.text", amount);
+}
+
 export class AccountPage {
   checkUrlAndTitlePage() {
     cy.verifyUrlAndTitlePage("account", "My Account");
   }
 
   verifyNewAccountInformation() {
-    //on account page
-    // cy.url().should("include", "/account");
-    // cy.get("h1.heading1").should("contain", "My Account");
-    // cy.verifyUrlAndTitlePage("account", "My Account");
-    //transaction history be equal to 0$
-    // cy.get(".dash-tile-balloon")
-    //   .find(".dash-tile-header")
-    //   .should("contain", "Transaction history")
-    //   .parents(".dash-tile-balloon")
-    //   .find(".dash-tile-text")
-    //   .should("contain", "0.00");
     this.checkUrlAndTitlePage();
-    this.getTransactionHistoryAmount("0.00");
+    this.checkTransactionHistoryAmountCard("0.00");
     this.getDownloadsAmount("0");
     this.getOrderHistoryAmount("0");
     this.getManageAddressBookAmount("1");
   }
 
-  getTransactionHistoryAmount(amount) {
+  checkTransactionHistoryAmountCard(amount) {
     cy.get(".dash-tile-balloon")
       .find(".dash-tile-header")
       .should("contain", "Transaction history")
@@ -89,40 +100,32 @@ export class AccountPage {
     cy.get("li.open").find(".dropdown-menu").contains("a", "Logoff").click();
   }
 
+  //address book
   goToAddressBookSidebar() {
     cy.get(".dash-tile-ocean").find(".dash-tile-header").find(".btn").click();
   }
 
   goToAddressBookNavbar() {
-    cy.get("#customernav").trigger("mouseover");
-    cy.get("li.open")
-      .find(".dropdown-menu")
-      .contains("a", "Manage Address Book")
-      .click();
+    goToThroughNavbar("Manage Address Book");
   }
 
   goToAddressBookIcon() {
-    cy.get(".nav-dash")
-      .find('[data-original-title="Manage Address Book"]')
-      .click();
+    goToThroughIcon("Manage Address Book");
   }
 
   goToPasswordChangeSidebar() {
-    cy.get(".side_account_list").contains("a", "Change password").click();
+    goToThroughSidebar("Change password");
   }
 
   goToPasswordChangeNavbar() {
-    cy.get("#customernav").trigger("mouseover");
-    cy.get("li.open")
-      .find(".dropdown-menu")
-      .contains("a", "Change password")
-      .click();
+    goToThroughNavbar("Change password");
   }
 
   goToPasswordChangeIcon() {
-    cy.get(".nav-dash").find('[data-original-title="Change password"]').click();
+    goToThroughIcon("Change password");
   }
 
+  //path content breadcrumb
   checkPathContentToAccount() {
     cy.get(".breadcrumb")
       .find("li")
@@ -130,10 +133,12 @@ export class AccountPage {
       .and("have.length", 2);
   }
 
+  //success msg
   verifySuccessMessage(msg) {
     cy.get(".alert-success").should("contain", msg);
   }
 
+  //wish list
   checkWishlistIcon() {
     cy.get(".nav-dash")
       .find('[data-original-title="My wish list"]')
@@ -149,42 +154,79 @@ export class AccountPage {
   }
 
   goToWishlistSidebar() {
-    cy.get(".side_account_list").contains("a", "My wish list").click();
+    goToThroughSidebar("My wish list");
   }
 
   goToWishlistNavbar() {
-    cy.get("#customernav").trigger("mouseover");
-    cy.get("li.open")
-      .find(".dropdown-menu")
-      .contains("a", "My wish list")
-      .click();
+    goToThroughNavbar("My wish list");
   }
 
   goToWishlistIcon() {
-    cy.get(".nav-dash").find('[data-original-title="My wish list"]').click();
+    goToThroughIcon("My wish list");
   }
 
+  //order history
   goToOrderHistorySidebar() {
-    cy.get(".side_account_list").contains("a", "Order history").click();
+    goToThroughSidebar("Order history");
   }
 
   goToOrderHistoryNavbar() {
-    cy.get("#customernav").trigger("mouseover");
-    cy.get("li.open")
-      .find(".dropdown-menu")
-      .contains("a", "Order history")
-      .click();
+    goToThroughNavbar("Order history");
   }
 
   goToOrderHistoryIcon() {
-    cy.get(".nav-dash").find('[data-original-title="Order history"]').click();
+    goToThroughIcon("Order history");
   }
 
   checkOrderAmount(amount) {
-    cy.get(".nav-dash")
-      .find('[data-original-title="Order history"]')
-      .as("orderbadge");
-    cy.get("@orderbadge").find(".badge-success").should("have.text", amount);
+    checkQuantityOfElementsIcon("Order history", amount);
+  }
+
+  //transactions history
+  goToTransactionHistorySidebar() {
+    goToThroughSidebar("Transaction history");
+  }
+
+  goToTransactionHistoryNavbar() {
+    goToThroughNavbar("Transaction history");
+  }
+
+  goToTransactionHistoryIcon() {
+    goToThroughIcon("Transaction history");
+  }
+
+  checkTransactionHistoryAmountIcon(amount) {
+    checkQuantityOfElementsIcon("Transaction history", amount);
+  }
+
+  //downloads
+  goToDownloadSidebar() {
+    goToThroughSidebar("Downloads");
+  }
+
+  goToDownloadNavbar() {
+    goToThroughNavbar("Downloads");
+  }
+
+  goToDownloadIcon() {
+    goToThroughIcon("Downloads");
+  }
+
+  checkDownloadsAmountIcon(amount) {
+    checkQuantityOfElementsIcon("Downloads", amount);
+  }
+
+  //notifications
+  goToNotificationsSidebar() {
+    goToThroughSidebar("Notifications");
+  }
+
+  goToNotificationsNavbar() {
+    goToThroughNavbar("Notifications");
+  }
+
+  goToNotificationsIcon() {
+    goToThroughIcon("Notifications");
   }
 }
 

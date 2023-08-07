@@ -228,6 +228,19 @@ export class AccountPage {
   goToNotificationsIcon() {
     goToThroughIcon("Notifications");
   }
+
+  //edit account
+  goToEditAccountDetailsSidebar() {
+    goToThroughSidebar("Edit account details");
+  }
+
+  goToEditAccountDetailsNavbar() {
+    goToThroughNavbar("Edit account details");
+  }
+
+  goToEditAccountDetailsIcon() {
+    goToThroughIcon("Edit account details");
+  }
 }
 
 export const onAccountPage = new AccountPage();

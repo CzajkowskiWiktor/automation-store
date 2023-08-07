@@ -12,6 +12,7 @@ import { onOrderDetailsPage } from "../support/page_object/orderDetailsPage";
 import { onTransactionHistoryPage } from "../support/page_object/transactionHistoryPage";
 import { onDownloadPage } from "../support/page_object/downloadPage";
 import { onNotificationsPage } from "../support/page_object/notificationsPage";
+import { onEditAccountDetailsPage } from "../support/page_object/editAccountDetailsPage";
 import { navigateTo } from "../support/page_object/navigationPage";
 
 describe("Testing on user account page", () => {
@@ -460,7 +461,7 @@ describe("Testing on user account page", () => {
     let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
     let orderDateAdded = "08/01/2023";
     let productsQuantity = [1, 1, 1, 1, 2];
-    let eachProductOrderedQuantity = [1, 1, 1, 1, [1,1]];
+    let eachProductOrderedQuantity = [1, 1, 1, 1, [1, 1]];
     let productNames = [
       "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
       "Viva Glam Lipstick",
@@ -520,7 +521,7 @@ describe("Testing on user account page", () => {
     let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
     let orderDateAdded = "08/01/2023";
     let productsQuantity = [1, 1, 1, 1, 2];
-    let eachProductOrderedQuantity = [1, 1, 1, 1, [1,1]];
+    let eachProductOrderedQuantity = [1, 1, 1, 1, [1, 1]];
     let productNames = [
       "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
       "Viva Glam Lipstick",
@@ -569,18 +570,18 @@ describe("Testing on user account page", () => {
       orderTotals[number]
     );
     //print the order
-    onOrderDetailsPage.clickPrintBtnAndVerify()
+    onOrderDetailsPage.clickPrintBtnAndVerify();
   });
 
   it("check user non transaction history", () => {
-    let transAmount = '$0.00'
+    let transAmount = "$0.00";
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
     onAccountPage.checkPathContentToAccount();
-    onAccountPage.checkTransactionHistoryAmountIcon(transAmount)
-    onAccountPage.checkTransactionHistoryAmountCard(transAmount)
+    onAccountPage.checkTransactionHistoryAmountIcon(transAmount);
+    onAccountPage.checkTransactionHistoryAmountCard(transAmount);
     onAccountPage.goToTransactionHistoryNavbar();
     onTransactionHistoryPage.checkUrlAndTitlePage();
     onTransactionHistoryPage.checkPathContentToTransactionHistory();
@@ -629,10 +630,12 @@ describe("Testing on user account page", () => {
     onNotificationsPage.checkSelectedOptionInSidebarlist();
     onNotificationsPage.selectNewslettersCheckbox();
     onNotificationsPage.clickContinueBtn();
-    onAccountPage.verifySuccessMessage('Success: Your notification settings has been successfully updated!')
+    onAccountPage.verifySuccessMessage(
+      "Success: Your notification settings has been successfully updated!"
+    );
   });
 
-  it('uncheck and save newsletter notification for user', () => {
+  it("uncheck and save newsletter notification for user", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
@@ -644,14 +647,38 @@ describe("Testing on user account page", () => {
     onNotificationsPage.checkSelectedOptionInSidebarlist();
     onNotificationsPage.unselectNewslettersCheckbox();
     onNotificationsPage.clickContinueBtn();
-    onAccountPage.verifySuccessMessage('Success: Your notification settings has been successfully updated!')
+    onAccountPage.verifySuccessMessage(
+      "Success: Your notification settings has been successfully updated!"
+    );
   });
 
-  it.only("edit account details", () => {
+  it.only("check account details", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
     onAccountPage.checkPathContentToAccount();
+    onAccountPage.goToEditAccountDetailsSidebar();
+    onEditAccountDetailsPage.checkUrlAndTitlePage();
+    onEditAccountDetailsPage.checkPathContentToEditAccountDetails();
+    onEditAccountDetailsPage.checkSelectedOptionInSidebarlist();
+    onEditAccountDetailsPage.checkUserPersonalInformation(userWithHistory);
+  });
+
+  it("edit account detail - phone number", () => {
+    navigateTo.loginOrRegister();
+    onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.verifyCustomerNameOnPage(userWithHistory.firstname);
+    onAccountPage.checkPathContentToAccount();
+    onAccountPage.goToEditAccountDetailsSidebar();
+    onEditAccountDetailsPage.checkUrlAndTitlePage();
+    onEditAccountDetailsPage.checkPathContentToEditAccountDetails();
+    onEditAccountDetailsPage.checkSelectedOptionInSidebarlist();
+    onEditAccountDetailsPage.editPhoneNumber(userWithHistory, 245678902);
+    onEditAccountDetailsPage.clickContinueBtn();
+    onAccountPage.verifySuccessMessage(
+      "Success: Your account has been successfully updated."
+    );
   });
 });

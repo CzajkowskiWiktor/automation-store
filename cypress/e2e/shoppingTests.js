@@ -1,10 +1,28 @@
 /// <reference types="Cypress" />
-import { navigateTo } from "../support/page_object/navigationPage";
 import { onHomePage } from "../support/page_object/homePage";
 import { onCartPage } from "../support/page_object/cartPage";
+import { onLoginPage } from "../support/page_object/loginPage";
+import { onConfirmCheckoutPage } from "../support/page_object/confirmCheckoutPage";
+import { onSuccessOrderPage } from "../support/page_object/successOrderPage";
+import { onShippingEditPage } from "../support/page_object/shippingEditPage";
+import { onShippingAddAddressPage } from "../support/page_object/shippingAddAddressPage";
+import { onPaymentEditPage } from "../support/page_object/paymentEditPage";
+import { onPaymentAddAddressPage } from "../support/page_object/paymentAddAddressPage";
+import { onAccountPage } from "../support/page_object/accountPage";
+import { onGuestStepOnePage } from "../support/page_object/guestStepOnePage";
 
 describe("Testing shopping funcionality", () => {
   let globalData;
+
+  const newAddressUser = {
+    firstname: "Test",
+    lastname: "Lorem",
+    address1: "al. Niepodleglosci 12",
+    city: "Poznan",
+    postcode: "61-120",
+    country: "Poland",
+    zone: "Wielkopolskie",
+  };
 
   beforeEach("open a website and login to account", () => {
     //assign global data
@@ -13,17 +31,20 @@ describe("Testing shopping funcionality", () => {
     });
     //open home page nad sign in
     cy.openHomePage();
+
+    //check if HomePage Section is Active
+    onHomePage.checkHomeSectionActiveSubnav();
+    //check if cart is empty before testing and return home
+    onHomePage.goToCartNavbar();
+    onCartPage.checkUrlAndTitlePage();
+    onCartPage.checkPathContentToCart();
+    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkNoExistingCartTable();
+    onCartPage.clickContinueBtn();
   });
 
   it("add article from homePage to a cart", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart
@@ -33,14 +54,6 @@ describe("Testing shopping funcionality", () => {
   });
 
   it("check cart with few articles", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add items to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     onHomePage.addItemToCartByProductName(
@@ -61,15 +74,6 @@ describe("Testing shopping funcionality", () => {
   });
 
   it("add items to cart and then delete one", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add items to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     onHomePage.addItemToCartByProductName(
@@ -109,15 +113,6 @@ describe("Testing shopping funcionality", () => {
   });
 
   it("add item to cart and then delete it", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart
@@ -137,34 +132,17 @@ describe("Testing shopping funcionality", () => {
     //check if cart is empty
     onHomePage.goToCartNavbar();
     onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
+    onCartPage.checkPathContentToCart();
     onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
     onCartPage.checkNoExistingCartTable();
   });
 
   it("try to add an article which is out of stock to a cart from home page", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart which is out of stock
     onHomePage.tryToAddProductOutOfStock("BeneFit Girl Meets Pearl", "$19.00");
   });
 
   it("apply the wrong coupon to the cart", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart
@@ -178,15 +156,6 @@ describe("Testing shopping funcionality", () => {
   });
 
   it("add item to cart and update the quantity of product", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart
@@ -194,22 +163,13 @@ describe("Testing shopping funcionality", () => {
     onCartPage.checkNumberOfProductsInCartTopNavbar();
     onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
     //change quantity of product in cart and update cart
-    onCartPage.changeQuantityOfProduct('Skinsheen Bronzer Stick',4);
+    onCartPage.changeQuantityOfProduct("Skinsheen Bronzer Stick", 4);
     onCartPage.clickCartUpdateBtn();
     //verify if the total amount has been changed
-    onCartPage.checkTotalPriceOfItem('Skinsheen Bronzer Stick', '$118.00')
+    onCartPage.checkTotalPriceOfItem("Skinsheen Bronzer Stick", "$118.00");
   });
 
   it("add few items to cart and update the quantity of one specific product", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add items to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     onHomePage.addItemToCartByProductName(
@@ -233,22 +193,13 @@ describe("Testing shopping funcionality", () => {
       ["$29.50", "$42.00", "$89.00"]
     );
     //change quantity of product in cart
-    onCartPage.changeQuantityOfProduct('Absolue Eye Precious Cells',4);
+    onCartPage.changeQuantityOfProduct("Absolue Eye Precious Cells", 4);
     onCartPage.clickCartUpdateBtn();
     //verify if the total amount has been changed
-    onCartPage.checkTotalPriceOfItem('Absolue Eye Precious Cells', '$356.00')
+    onCartPage.checkTotalPriceOfItem("Absolue Eye Precious Cells", "$356.00");
   });
 
   it("add item to cart and update the quantity of product - enter wrong value - a symbol instead of number -> item is deleted", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart
@@ -256,7 +207,7 @@ describe("Testing shopping funcionality", () => {
     onCartPage.checkNumberOfProductsInCartTopNavbar();
     onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
     //change quantity of product in cart
-    onCartPage.changeQuantityOfProduct('Skinsheen Bronzer Stick','test');
+    onCartPage.changeQuantityOfProduct("Skinsheen Bronzer Stick", "test");
     onCartPage.clickCartUpdateBtn();
     //item should be deleted
     onCartPage.checkNumberOfProductsInCartTopNavbar();
@@ -264,16 +215,7 @@ describe("Testing shopping funcionality", () => {
     onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
   });
 
-  it.only("add few items to cart and update the quantity of one product - enter wrong value - a symbol instead of number -> item is deleted", () => {
-    onHomePage.checkHomeSectionActiveSubnav();
-    //check if cart is empty
-    onHomePage.goToCartNavbar();
-    onCartPage.checkUrlAndTitlePage();
-    onCartPage.checkPathContentToDownload();
-    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
-    onCartPage.checkNumberOfProductsInCartTopNavbar();
-    onCartPage.checkNoExistingCartTable();
-    onCartPage.clickContinueBtn();
+  it("add few items to cart and update the quantity of one product - enter wrong value - a symbol instead of number -> item is deleted", () => {
     //find and add items to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     onHomePage.addItemToCartByProductName(
@@ -297,31 +239,217 @@ describe("Testing shopping funcionality", () => {
       ["$29.50", "$42.00", "$89.00"]
     );
     //change quantity of product in cart
-    onCartPage.changeQuantityOfProduct('Skinsheen Bronzer Stick','test');
+    onCartPage.changeQuantityOfProduct("Skinsheen Bronzer Stick", "test");
     onCartPage.clickCartUpdateBtn();
     //item should be deleted
     onCartPage.checkNumberOfProductsInCartTopNavbar();
     onCartPage.checkShoppingCartDetails(
-        [
-          "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
-          "Absolue Eye Precious Cells",
-        ],
-        1,
-        ["$42.00", "$89.00"]
-      );
+      [
+        "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+        "Absolue Eye Precious Cells",
+      ],
+      1,
+      ["$42.00", "$89.00"]
+    );
     //
-    onCartPage.findProductNameInCartNotExists('Skinsheen Bronzer Stick')
+    onCartPage.findProductNameInCartNotExists("Skinsheen Bronzer Stick");
   });
 
-  it("add item to cart and estimate shipping and taxes", () => {});
+  it("add item to cart and estimate shipping and taxes", () => {
+    //find and add items to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //estimate shipping and taxes
+    onCartPage.fillFormToEstimateShippingAndTaxes(
+      globalData.country,
+      globalData.zone,
+      globalData.postcode
+    );
+    //check total values in summary
+    onCartPage.checkSubTotalValueInSummary();
+    onCartPage.checkShipmentRateInSummary();
+    onCartPage.checkFinalTotalValueInSummary();
+  });
 
-  it("add item to cart and continue the shopping", () => {});
+  it("add item to cart and continue the shopping", () => {
+    //find and add items to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click continue shopping button and check if the home page will appear
+    onCartPage.clickContinueShoppingBtn();
+    onHomePage.checkHomeSectionActiveSubnav();
+  });
 
-  it("change currency and check prices of products", () => {});
+  it("make an order for a product - add to cart from home page, open a cart and finish transaction - login user", () => {
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
 
-  it("make an order for a product - add to cart from home page, open a cart and finish transaction -login user", () => {});
+  it("make an order for a product - add to cart from home page, open a cart and finish transaction - guest user", () => {
+    const guestUser = {
+      firstname: "David",
+      lastname: "Johnson",
+      email: "davidjohnson111111111222266@example.com",
+      tele: "123456789",
+      company: "Auto-Test Przykoni",
+      address1: "ul. Testowa 123/1",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+    };
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.checkGuestCheckoutOption();
+    onLoginPage.clickContinueBtn();
+    //fill the guest form and finish transaction after checking the details
+    onGuestStepOnePage.checkUrlAndTitlePage();
+    onGuestStepOnePage.checkPathContentToPaymentEdit();
+    onGuestStepOnePage.fillPersonalDetails(guestUser);
+    onGuestStepOnePage.clickContinueBtn();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(guestUser);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(guestUser);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
 
-  it("make an order for a product - add to cart from home page, open a cart and finish transaction - guest user", () => {});
+  it("make an order for a product - add to cart from home page, open a cart and finish transaction - guest user with seperate address shipping", () => {
+    const guestUser = {
+      firstname: "David",
+      lastname: "Johnson",
+      email: "davidjohnson111111111222266@example.com",
+      tele: "123456789",
+      company: "Auto-Test Przykoni",
+      address1: "ul. Testowa 123/1",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+    };
+
+    const shippingAddress = {
+      firstname: "Test",
+      lastname: "Johnteson",
+      email: "testy12323543134@example.com",
+      address1: "ul. Udemy 123/1",
+      city: "Wroclaw",
+      country: "Poland",
+      postcode: "31-123",
+      zone: "Dolnoslaskie",
+    };
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.checkGuestCheckoutOption();
+    onLoginPage.clickContinueBtn();
+    //fill the guest form and finish transaction after checking the details
+    onGuestStepOnePage.checkUrlAndTitlePage();
+    onGuestStepOnePage.checkPathContentToPaymentEdit();
+    onGuestStepOnePage.fillPersonalDetails(guestUser);
+    onGuestStepOnePage.checkSeperateShippingAddress();
+    onGuestStepOnePage.fillShippingSeperateDetails(shippingAddress);
+    onGuestStepOnePage.clickContinueBtn();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(shippingAddress);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(guestUser);
+    onConfirmCheckoutPage.verifyItemsInCart("Skinsheen Bronzer Stick", 1, "$29.50");
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
+
+  it.only("fail to make an order for a product with guest user - not fill all mandatory fields -> email and address1", () => {
+    const guestUser = {
+        firstname: "David",
+        lastname: "Johnson",
+        email: "{backspace}",
+        tele: "123456789",
+        company: "Auto-Test Przykoni",
+        address1: "{backspace}",
+        city: "Warszawa",
+        country: "Poland",
+        postcode: "01-123",
+        zone: "Mazowieckie",
+      };
+      //find and add item to cart
+      onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+      //check item in cart
+      onHomePage.goToCartNavbar();
+      onCartPage.checkNumberOfProductsInCartTopNavbar();
+      onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+      //click checkout btn
+      onCartPage.clickTotalCheckoutBtn();
+      onLoginPage.verifyLoginPageTitle();
+      onLoginPage.checkGuestCheckoutOption();
+      onLoginPage.clickContinueBtn();
+      //fill the guest form and finish transaction after checking the details
+      onGuestStepOnePage.checkUrlAndTitlePage();
+      onGuestStepOnePage.checkPathContentToPaymentEdit();
+      onGuestStepOnePage.fillPersonalDetails(guestUser);
+      onGuestStepOnePage.clickContinueBtn();
+      onGuestStepOnePage.getErrorInputMsg([
+        "E-Mail Address does not appear to be valid!",
+        "Address 1 must be greater than 3 and less than 128 characters!"
+      ]);
+  });
 
   it("make an order for a product - add to cart from home page, open a cart and finish transaction - register a user", () => {});
 
@@ -330,6 +458,373 @@ describe("Testing shopping funcionality", () => {
   it("add few products and finish the transaction", () => {});
 
   it("add item to cart, change currency and finish transaction", () => {});
+
+  it("sign in and then add product to cart and finish transaction - a cart must be empty on start", () => {
+    onHomePage.loginOrRegister();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    onAccountPage.checkUrlAndTitlePage();
+    onAccountPage.goToHomePage();
+    onHomePage.checkHomeSectionActiveSubnav();
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
+
+  it("After successful order processed, check if cart is empty", () => {
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+    onSuccessOrderPage.clickContinueBtn();
+    //go to cart and check if cart is empty
+    onHomePage.goToCartNavbar();
+    onCartPage.checkUrlAndTitlePage();
+    onCartPage.checkTextOfEmptyCart("Your shopping cart is empty!");
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+  });
+
+  it("checkout the product and change edit shipping on checkout confirmation page - another existing address", () => {
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickEditShippingBtn();
+    //edit shipping information
+    onShippingEditPage.checkUrlAndTitlePage();
+    onShippingEditPage.checkPathContentToShippingEdit();
+    onShippingEditPage.clickChangeAddressBtn();
+    //change to other existing address
+    onShippingAddAddressPage.checkUrlAndTitlePage();
+    onShippingAddAddressPage.changeAddressCheckboxToAnotherByDetails(
+      newAddressUser
+    );
+    onShippingAddAddressPage.clickContinueBtnToChangeAddress();
+    //verify if the changes have been applied on confirm page
+    onConfirmCheckoutPage.verifyDataOnShippingTable(newAddressUser);
+  });
+
+  it("checkout the product and change edit shipping on checkout confirmation page - new address", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickEditShippingBtn();
+    //edit shipping information
+    onShippingEditPage.checkUrlAndTitlePage();
+    onShippingEditPage.checkPathContentToShippingEdit();
+    onShippingEditPage.clickChangeAddressBtn();
+    onShippingAddAddressPage.checkUrlAndTitlePage();
+    onShippingAddAddressPage.addNewAddress(newAddressUser);
+    onShippingAddAddressPage.clickContinueBtnToAddAddress();
+    //verify if the changes have been applied on confirm page
+    onConfirmCheckoutPage.verifyDataOnShippingTable(newAddressUser);
+  });
+
+  it("checkout the product and change edit payment on checkout confirmation page", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickEditPaymentBtn();
+    //edit payment information
+    onPaymentEditPage.checkUrlAndTitlePage();
+    onPaymentEditPage.clickChangeAddressBtn();
+    onPaymentAddAddressPage.checkUrlAndTitlePage();
+    onPaymentAddAddressPage.changeAddressCheckboxToAnotherByDetails(
+      newAddressUser
+    );
+    onPaymentAddAddressPage.clickContinueBtnToChangeAddress();
+    //verify if the changes have been applied on confirm page
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(newAddressUser);
+  });
+
+  it("checkout the product and on checkout confirmation page change edit coupon - apply the wrong one", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickEditCouponBtn();
+    //apply wrong coupon
+    onPaymentEditPage.checkUrlAndTitlePage();
+    onPaymentEditPage.applyCouponCode("coupon");
+    onPaymentEditPage.clickApplyCouponBtn();
+    onPaymentEditPage.verifyErrorMessage();
+    onPaymentEditPage.verifyErrorCouponRemoveBtnExists();
+  });
+
+  it("checkout the product and on checkout confirmation page change edit cart - edit the quantites ", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickEditCartBtn();
+    //edit the cart - change quantity of product
+    onCartPage.checkUrlAndTitlePage();
+    onCartPage.changeQuantityOfProduct("Skinsheen Bronzer Stick", 3);
+    onCartPage.clickCartCheckoutBtn();
+    //verify if the chechout information has been updated
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      3,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+  });
+
+  it("checkout the product and on checkout add comment to an order", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    //check if comment exists before adding it
+    onConfirmCheckoutPage.checkCommentFormNonExistence();
+    //add comment to an order - through shipping or payment edit page
+    onConfirmCheckoutPage.clickEditPaymentBtn();
+    onPaymentEditPage.addCommentToOrder("This is a test comment");
+    onPaymentEditPage.agreeCheckboxToReturnPolicy();
+    onPaymentEditPage.clickContinueBtn();
+    onConfirmCheckoutPage.checkCommentFormExistence();
+    onConfirmCheckoutPage.checkCommentText("This is a test comment");
+  });
+
+  it("fail adding comment to payment on checkout page - not agreed to return policy", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    //check if comment exists before adding it
+    onConfirmCheckoutPage.checkCommentFormNonExistence();
+    //add comment to an order - through shipping or payment edit page
+    onConfirmCheckoutPage.clickEditPaymentBtn();
+    onPaymentEditPage.addCommentToOrder("This is a test comment");
+    onPaymentEditPage.clickContinueBtn();
+    //verify error message
+    onPaymentEditPage.verifyErrorMessageNotCheckReturnPolicy();
+  });
+
+  it("add comment to checkout page but firstly make an error not checking return policy", () => {
+    //add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    //check if comment exists before adding it
+    onConfirmCheckoutPage.checkCommentFormNonExistence();
+    //add comment to an order - through shipping or payment edit page
+    onConfirmCheckoutPage.clickEditPaymentBtn();
+    onPaymentEditPage.addCommentToOrder("This is a test comment");
+    onPaymentEditPage.clickContinueBtn();
+    //verify error message
+    onPaymentEditPage.verifyErrorMessageNotCheckReturnPolicy();
+    //close error message and add properly the comment msg
+    onPaymentEditPage.closeErrorMessageBtn();
+    onPaymentEditPage.addCommentToOrder("This is a test comment");
+    onPaymentEditPage.agreeCheckboxToReturnPolicy();
+    onPaymentEditPage.clickContinueBtn();
+    onConfirmCheckoutPage.checkCommentFormExistence();
+    onConfirmCheckoutPage.checkCommentText("This is a test comment");
+  });
 
   //product tests
   it("change quantity and add item to cart", () => {});
@@ -345,6 +840,8 @@ describe("Testing shopping funcionality", () => {
   it("check item reviews", () => {});
 
   it("check related products", () => {});
+
+  it("change currency and check prices of products", () => {});
 
   it("check special offer - verify all products", () => {});
 

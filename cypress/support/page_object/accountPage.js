@@ -241,6 +241,10 @@ export class AccountPage {
   goToEditAccountDetailsIcon() {
     goToThroughIcon("Edit account details");
   }
+
+  goToHomePage(){
+    cy.get('#categorymenu').contains('a', 'Home').click();
+  }
 }
 
 export const onAccountPage = new AccountPage();

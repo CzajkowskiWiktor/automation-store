@@ -25,6 +25,11 @@ export class LoginPage {
     });
   }
 
+  checkGuestCheckoutOption() {
+    //get the guest checkout form
+    cy.get("#accountFrm_accountguest").check({force: true}).should("be.checked");
+  }
+
   loginToAccount(login, password) {
     cy.get(".returncustomer").then((form) => {
       cy.wrap(form).find("#loginFrm_loginname").type(login);
@@ -85,6 +90,10 @@ export class LoginPage {
 
   clickCloseErrorMessageBtn() {
     cy.get(".alert-error").find("button").click();
+  }
+
+  clickContinueBtn(){
+    cy.get('[title="Continue"]').click();
   }
 }
 

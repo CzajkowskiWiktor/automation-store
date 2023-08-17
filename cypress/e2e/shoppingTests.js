@@ -10,6 +10,7 @@ import { onPaymentEditPage } from "../support/page_object/paymentEditPage";
 import { onPaymentAddAddressPage } from "../support/page_object/paymentAddAddressPage";
 import { onAccountPage } from "../support/page_object/accountPage";
 import { onGuestStepOnePage } from "../support/page_object/guestStepOnePage";
+import { onRegisterPage } from "../support/page_object/registerPage";
 
 describe("Testing shopping funcionality", () => {
   let globalData;
@@ -406,7 +407,11 @@ describe("Testing shopping funcionality", () => {
     onGuestStepOnePage.clickContinueBtn();
     onConfirmCheckoutPage.verifyDataOnShippingTable(shippingAddress);
     onConfirmCheckoutPage.verifyDataOnPaymentTable(guestUser);
-    onConfirmCheckoutPage.verifyItemsInCart("Skinsheen Bronzer Stick", 1, "$29.50");
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
     onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
     onConfirmCheckoutPage.verifyOrderSummary();
     onConfirmCheckoutPage.clickConfirmOrderBtn();
@@ -416,48 +421,303 @@ describe("Testing shopping funcionality", () => {
     onSuccessOrderPage.verifySuccessOrderMessage();
   });
 
-  it.only("fail to make an order for a product with guest user - not fill all mandatory fields -> email and address1", () => {
+  it("fail to make an order for a product with guest user - not fill all mandatory fields -> email and address1", () => {
     const guestUser = {
-        firstname: "David",
-        lastname: "Johnson",
-        email: "{backspace}",
-        tele: "123456789",
-        company: "Auto-Test Przykoni",
-        address1: "{backspace}",
-        city: "Warszawa",
-        country: "Poland",
-        postcode: "01-123",
-        zone: "Mazowieckie",
-      };
-      //find and add item to cart
-      onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
-      //check item in cart
-      onHomePage.goToCartNavbar();
-      onCartPage.checkNumberOfProductsInCartTopNavbar();
-      onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
-      //click checkout btn
-      onCartPage.clickTotalCheckoutBtn();
-      onLoginPage.verifyLoginPageTitle();
-      onLoginPage.checkGuestCheckoutOption();
-      onLoginPage.clickContinueBtn();
-      //fill the guest form and finish transaction after checking the details
-      onGuestStepOnePage.checkUrlAndTitlePage();
-      onGuestStepOnePage.checkPathContentToPaymentEdit();
-      onGuestStepOnePage.fillPersonalDetails(guestUser);
-      onGuestStepOnePage.clickContinueBtn();
-      onGuestStepOnePage.getErrorInputMsg([
-        "E-Mail Address does not appear to be valid!",
-        "Address 1 must be greater than 3 and less than 128 characters!"
-      ]);
+      firstname: "David",
+      lastname: "Johnson",
+      email: "{backspace}",
+      tele: "123456789",
+      company: "Auto-Test Przykoni",
+      address1: "{backspace}",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+    };
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.checkGuestCheckoutOption();
+    onLoginPage.clickContinueBtn();
+    //fill the guest form and finish transaction after checking the details
+    onGuestStepOnePage.checkUrlAndTitlePage();
+    onGuestStepOnePage.checkPathContentToPaymentEdit();
+    onGuestStepOnePage.fillPersonalDetails(guestUser);
+    onGuestStepOnePage.clickContinueBtn();
+    onGuestStepOnePage.getErrorInputMsg([
+      "E-Mail Address does not appear to be valid!",
+      "Address 1 must be greater than 3 and less than 128 characters!",
+    ]);
   });
 
-  it("make an order for a product - add to cart from home page, open a cart and finish transaction - register a user", () => {});
+  it("make an order for a product - add to cart from home page, open a cart and finish transaction - register a user", () => {
+    const registerForm = {
+      firstname: "Daviden",
+      lastname: "Johnsony",
+      email: "johnyTony111123@example.com",
+      tele: "123456789",
+      address1: "ul. Testowa 123/1",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+      login: "tonyjohny1232",
+      password: "test123",
+      passwordConfirm: "test123",
+      newsletter: 1,
+      agreePolicy: 1,
+    };
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    //click checkout btn
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.getAndClickToRegisterForm();
+    onRegisterPage.verifyRegisterPageTitle();
+    onRegisterPage.fillRegisterForm(
+      registerForm.firstname,
+      registerForm.lastname,
+      registerForm.email,
+      registerForm.tele,
+      registerForm.address1,
+      registerForm.city,
+      registerForm.country,
+      registerForm.postcode,
+      registerForm.zone,
+      registerForm.login,
+      registerForm.password,
+      registerForm.passwordConfirm,
+      registerForm.newsletter,
+      registerForm.agreePolicy
+    );
+    onRegisterPage.clickContinueBtn();
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(registerForm);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(registerForm);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      1,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
 
-  it("make an order for a product - update the quantity and checkout", () => {});
+  it("make an order for a product - update the quantity and checkout", () => {
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    onCartPage.changeQuantityOfProduct("Skinsheen Bronzer Stick", 10);
+    onCartPage.clickCartUpdateBtn();
+    //check details after the update of product's quantity and finish transaction
+    onCartPage.checkShoppingCartDetails(
+      "Skinsheen Bronzer Stick",
+      10,
+      "$29.50"
+    );
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.checkLoginFormTitleAndText();
+    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    //confirm order/checkout information
+    onConfirmCheckoutPage.checkUrlAndTitlePage();
+    onConfirmCheckoutPage.checkPathContentToConfrim();
+    onConfirmCheckoutPage.verifyTextOfAcceptInReturnPolicy();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(globalData);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(globalData);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      "Skinsheen Bronzer Stick",
+      10,
+      "$29.50"
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
 
-  it("add few products and finish the transaction", () => {});
+  it("add few products and finish the transaction", () => {
+    const guestUser = {
+      firstname: "David",
+      lastname: "Johnson",
+      email: "davidjohnson111111111222266@example.com",
+      tele: "123456789",
+      company: "Auto-Test Przykoni",
+      address1: "ul. Testowa 123/1",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+    };
+    //find and add items to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    onHomePage.addItemToCartByProductName(
+      "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+      "$42.00"
+    );
+    onHomePage.addItemToCartByProductName(
+      "Absolue Eye Precious Cells",
+      "$89.00"
+    );
+    //check items details in cart - summary and payment totals
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails(
+      [
+        "Skinsheen Bronzer Stick",
+        "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+        "Absolue Eye Precious Cells",
+      ],
+      1,
+      ["$29.50", "$42.00", "$89.00"]
+    );
+    onCartPage.checkSubTotalValueInSummary();
+    onCartPage.checkShipmentRateInSummary();
+    onCartPage.checkFinalTotalValueInSummary();
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.checkGuestCheckoutOption();
+    onLoginPage.clickContinueBtn();
+    //fill the guest form and finish transaction after checking the details
+    onGuestStepOnePage.checkUrlAndTitlePage();
+    onGuestStepOnePage.checkPathContentToPaymentEdit();
+    onGuestStepOnePage.fillPersonalDetails(guestUser);
+    onGuestStepOnePage.clickContinueBtn();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(guestUser);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(guestUser);
+    onConfirmCheckoutPage.verifyItemsInCart(
+      [
+        "Skinsheen Bronzer Stick",
+        "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+        "Absolue Eye Precious Cells",
+      ],
+      1,
+      ["$29.50", "$42.00", "$89.00"]
+    );
+    onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+    onConfirmCheckoutPage.verifyOrderSummary();
+    onConfirmCheckoutPage.clickConfirmOrderBtn();
+    //on success order page
+    onSuccessOrderPage.checkUrlAndTitlePage();
+    onSuccessOrderPage.checkPathContentToSuccessOrder();
+    onSuccessOrderPage.verifySuccessOrderMessage();
+  });
 
-  it("add item to cart, change currency and finish transaction", () => {});
+  it.only("add few products, change quantity of one product and finish the transaction", () => {
+    const guestUser = {
+      firstname: "David",
+      lastname: "Johnson",
+      email: "davidjohnson111111111222266@example.com",
+      tele: "123456789",
+      company: "Auto-Test Przykoni",
+      address1: "ul. Testowa 123/1",
+      city: "Warszawa",
+      country: "Poland",
+      postcode: "01-123",
+      zone: "Mazowieckie",
+    };
+    //find and add items to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    onHomePage.addItemToCartByProductName(
+      "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+      "$42.00"
+    );
+    onHomePage.addItemToCartByProductName(
+      "Absolue Eye Precious Cells",
+      "$89.00"
+    );
+    //check items details in cart - summary and payment totals
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails(
+      [
+        "Skinsheen Bronzer Stick",
+        "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+        "Absolue Eye Precious Cells",
+      ],
+      1,
+      ["$29.50", "$42.00", "$89.00"]
+    );
+    onCartPage.checkSubTotalValueInSummary();
+    onCartPage.checkShipmentRateInSummary();
+    onCartPage.checkFinalTotalValueInSummary();
+    //change quantity of product and verify again all data in cart
+    onCartPage.changeQuantityOfProduct("Absolue Eye Precious Cells", 3);
+    onCartPage.clickCartUpdateBtn();
+    onCartPage.checkShoppingCartDetails(
+      [
+        "Skinsheen Bronzer Stick",
+        "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+        "Absolue Eye Precious Cells",
+      ],
+      [1, 1, 3],
+      ["$29.50", "$42.00", "$89.00"]
+    );
+    onCartPage.checkSubTotalValueInSummary();
+    onCartPage.checkFinalTotalValueInSummary();
+    onCartPage.clickTotalCheckoutBtn();
+    onLoginPage.verifyLoginPageTitle();
+    onLoginPage.checkGuestCheckoutOption();
+    onLoginPage.clickContinueBtn();
+    //fill the guest form and finish transaction after checking the details
+    onGuestStepOnePage.checkUrlAndTitlePage();
+    onGuestStepOnePage.checkPathContentToPaymentEdit();
+    onGuestStepOnePage.fillPersonalDetails(guestUser);
+    onGuestStepOnePage.clickContinueBtn();
+    onConfirmCheckoutPage.verifyDataOnShippingTable(guestUser);
+    onConfirmCheckoutPage.verifyDataOnPaymentTable(guestUser);
+    onConfirmCheckoutPage.verifyItemsInCart(
+        [
+          "Skinsheen Bronzer Stick",
+          "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
+          "Absolue Eye Precious Cells",
+        ],
+        [1,1,3],
+        ["$29.50", "$42.00", "$89.00"]
+      );
+      onConfirmCheckoutPage.verifyPaymentCashAmountTotal();
+      onConfirmCheckoutPage.verifyOrderSummary();
+      onConfirmCheckoutPage.clickConfirmOrderBtn();
+      //on success order page
+      onSuccessOrderPage.checkUrlAndTitlePage();
+      onSuccessOrderPage.checkPathContentToSuccessOrder();
+      onSuccessOrderPage.verifySuccessOrderMessage();
+  });
+
+  it("add item to cart, change currency to /£/ and finish transaction", () => {
+    //test case not finished
+    //there is a need to change codes to split price by chosen currency - now it is fixed to only $ 
+    //find and add item to cart
+    onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
+    //check item in cart
+    onHomePage.goToCartNavbar();
+    onCartPage.checkNumberOfProductsInCartTopNavbar();
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "$29.50");
+    onCartPage.changeCurrencyTo('£');
+    onCartPage.checkShoppingCartDetails("Skinsheen Bronzer Stick", 1, "£23.40");
+  });
 
   it("sign in and then add product to cart and finish transaction - a cart must be empty on start", () => {
     onHomePage.loginOrRegister();
@@ -492,7 +752,7 @@ describe("Testing shopping funcionality", () => {
     onSuccessOrderPage.verifySuccessOrderMessage();
   });
 
-  it("After successful order processed, check if cart is empty", () => {
+  it.only("After successful order processed, check if cart is empty", () => {
     //find and add item to cart
     onHomePage.addItemToCartByProductName("Skinsheen Bronzer Stick", "$29.50");
     //check item in cart

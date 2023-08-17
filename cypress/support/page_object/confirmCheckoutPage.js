@@ -113,20 +113,42 @@ export class ConfirmCheckoutPage {
   verifyItemsInCart(itemName, itemQuantity, itemPrice) {
     //to do - check for more than 1 product
     cy.get(".confirm_products")
-      .find("td")
+      .find("tr")
       .then(($row) => {
-        //verify product name
-        const itemNameCart = $row.eq(1).text().trim();
-        expect(itemNameCart).to.equal(itemName);
-        //verify product price and quantity
-        const itemPriceCart = $row.eq(2).text().trim();
-        const itemQuantityCart = $row.eq(3).text().trim();
-        const totalPriceCart = $row.eq(4).text().split("$")[1].trim();
-        const calculatedTotalPrice =
-          parseFloat(itemPriceCart.split("$")[1].trim()) * parseInt(itemQuantityCart);
-        expect(itemPriceCart).to.equal(itemPrice);
-        expect(parseInt(itemQuantityCart)).to.equal(itemQuantity);
-        expect(totalPriceCart).to.equal(calculatedTotalPrice.toFixed(2));
+        const rowCount = Cypress.$($row).length;
+        if (rowCount !== 1) {
+            cy.wrap($row).each(($element, index) => {
+                const itemNameCart = $element.find('td').eq(1).text().trim();
+                expect(itemNameCart).to.equal(itemName[index]);
+                //verify product price and quantity
+                const itemPriceCart = $element.find('td').eq(2).text().trim();
+                const itemQuantityCart = $element.find('td').eq(3).text().trim();
+                const totalPriceCart = $element.find('td').eq(4).text().split("$")[1].trim();
+                const calculatedTotalPrice =
+                parseFloat(itemPriceCart.split("$")[1].trim()) * parseInt(itemQuantityCart);
+                expect(itemPriceCart).to.equal(itemPrice[index]);
+                //check if itemQuantity is an array
+                if(Array.isArray(itemQuantity)){
+                    expect(parseInt(itemQuantityCart)).to.equal(itemQuantity[index]);
+                } else {
+                    expect(parseInt(itemQuantityCart)).to.equal(itemQuantity);
+                } 
+                expect(totalPriceCart).to.equal(calculatedTotalPrice.toFixed(2));
+              });
+          } else {
+            //verify product name
+            const itemNameCart = $row.find('td').eq(1).text().trim();
+            expect(itemNameCart).to.equal(itemName);
+            //verify product price and quantity
+            const itemPriceCart = $row.find('td').eq(2).text().trim();
+            const itemQuantityCart = $row.find('td').eq(3).text().trim();
+            const totalPriceCart = $row.find('td').eq(4).text().split("$")[1].trim();
+            const calculatedTotalPrice =
+            parseFloat(itemPriceCart.split("$")[1].trim()) * parseInt(itemQuantityCart);
+            expect(itemPriceCart).to.equal(itemPrice);
+            expect(parseInt(itemQuantityCart)).to.equal(itemQuantity);
+            expect(totalPriceCart).to.equal(calculatedTotalPrice.toFixed(2));
+          }
       });
   }
 
@@ -138,7 +160,23 @@ export class ConfirmCheckoutPage {
         const rowCount = Cypress.$($el).length;
         cy.log(rowCount + " total row/s")
         if (rowCount !== 1) {
-          //to do for more than 1 product in cart
+            let totalValue=0;
+            cy.wrap($el).each(($element, index, array) => {
+                const totalPriceCart = $element.find('td').eq(4).text().split('$')[1].trim();
+                totalValue += parseFloat(totalPriceCart)
+                //on last iteration verify total value
+                if(index === array.length - 1){
+                    cy.log(totalValue.toFixed(2))
+                    cy.get(".contentpanel table")
+                        .eq(3)
+                        .find("tr")
+                        .first()
+                        .find("td")
+                        .eq(1)
+                        .find("span.bold")
+                        .should('contain', totalValue.toFixed(2))
+                }
+            })
         } else {
           cy.wrap($el).then(($row) => {
             //get total price value from cart table
@@ -221,9 +259,28 @@ export class ConfirmCheckoutPage {
         //item name and price
         cy.wrap($form).find('table').first().find('tr').then($row => {
             const rowCount = Cypress.$($row).length;
-            cy.log(rowCount + " total row/s")
             if (rowCount !== 1) {
-            //to do for more than 1 product in cart
+                //to do for more than 1 product in cart
+                cy.wrap($row).each((el, index) => {
+                    const productName = el.find('td').first().text().split('x')[1].trim()
+                    const productQuantity = el.find('td').first().text().split('x')[0].trim()
+                    const productPrice = el.find('td').eq(1).text().trim();
+                    //check and verify each of product info from order summary comparing to a cart information
+                    cy.get(".confirm_products")
+                        .find('tr')
+                        .then($element => {
+                            cy.wrap($element).each(($cartRow, index) => {
+                                const cartItemName = $cartRow.find('td').eq(1).text().trim();
+                                if(cartItemName === productName){
+                                    expect(cartItemName).to.equal(productName);
+                                    const cartItemQuantity = $cartRow.find('td').eq(3).text().trim();
+                                    expect(cartItemQuantity).to.equal(productQuantity);
+                                    const cartItemPrice = $cartRow.find('td').eq(2).text().trim();
+                                    expect(cartItemPrice).to.equal(productPrice);
+                                }
+                            })
+                    })
+                })
             } else {
                 const productName = $row.find('td').first().text().split('x')[1].trim()
                 const productQuantity = $row.find('td').first().text().split('x')[0].trim()

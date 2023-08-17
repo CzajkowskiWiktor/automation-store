@@ -30,27 +30,52 @@ export class CartPage {
         const rowCount = Cypress.$($el).length;
         if (rowCount !== 1) {
           cy.wrap($el).each(($element, index) => {
-            let price = productPrice[index].split("$")[1];
-            //claculate total price
-            let totalPrice = productQuantity * Number(price);
-            //check product name
-            cy.wrap($element)
-              .find("td")
-              .eq(1)
-              .should("contain", productName[index]);
-            //check product quantity
-            cy.wrap($element)
-              .find("td")
-              .eq(4)
-              .find('input[type="text"]')
-              .should("have.value", productQuantity);
-            //check product price
-            cy.wrap($element)
-              .find("td")
-              .eq(3)
-              .should("contain", productPrice[index]);
-            //check product total price
-            cy.wrap($element).find("td").eq(5).should("contain", totalPrice);
+            //check if productQuantity is an Array
+            if(Array.isArray(productQuantity)){
+              let price = productPrice[index].split("$")[1];
+              //claculate total price
+              let totalPrice = productQuantity[index] * Number(price);
+              //check product name
+              cy.wrap($element)
+                .find("td")
+                .eq(1)
+                .should("contain", productName[index]);
+              //check product quantity
+              cy.wrap($element)
+                .find("td")
+                .eq(4)
+                .find('input[type="text"]')
+                .should("have.value", productQuantity[index]);
+              //check product price
+              cy.wrap($element)
+                .find("td")
+                .eq(3)
+                .should("contain", productPrice[index]);
+              //check product total price
+              cy.wrap($element).find("td").eq(5).should("contain", totalPrice);
+            } else {
+              let price = productPrice[index].split("$")[1];
+              //claculate total price
+              let totalPrice = productQuantity * Number(price);
+              //check product name
+              cy.wrap($element)
+                .find("td")
+                .eq(1)
+                .should("contain", productName[index]);
+              //check product quantity
+              cy.wrap($element)
+                .find("td")
+                .eq(4)
+                .find('input[type="text"]')
+                .should("have.value", productQuantity); 
+              //check product price
+              cy.wrap($element)
+                .find("td")
+                .eq(3)
+                .should("contain", productPrice[index]);
+              //check product total price
+              cy.wrap($element).find("td").eq(5).should("contain", totalPrice);
+            }
           });
         } else {
           let price = productPrice.split("$")[1];
@@ -299,7 +324,23 @@ export class CartPage {
       .then(($el) => {
         const rowCount = Cypress.$($el).length;
         if (rowCount !== 1) {
-          //to do for more than 1 product in cart
+          let totalValue=0;
+            cy.wrap($el).each(($element, index, array) => {
+                const totalPriceCart = $element.find('td').eq(5).text().split('$')[1].trim();
+                totalValue += parseFloat(totalPriceCart)
+                //on last iteration verify total value
+                if(index === array.length - 1){
+                    cy.log(totalValue.toFixed(2))
+                    cy.get(".contentpanel table")
+                      .eq(3)
+                      .find("tr")
+                      .first()
+                      .find("td")
+                      .eq(1)
+                      .find("span.bold")
+                      .should("contain", totalValue.toFixed(2));
+                }
+            })
         } else {
           cy.wrap($el).then(($row) => {
             const totalPrice = $row.find("td").eq(5).text();
@@ -349,6 +390,12 @@ export class CartPage {
 
   clickContinueShoppingBtn(){
     cy.get(".cart_total").find('a[href="https://automationteststore.com/"]').click()
+  }
+
+  changeCurrencyTo(currencySymbol){
+    //verify to which currency symbol it must be changed
+    cy.get('.headerdetails').find('.language').trigger("mouseover");
+    cy.get('li.open').contains('a', currencySymbol).click();
   }
 }
 

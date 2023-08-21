@@ -4,7 +4,7 @@ import { onHomePage } from "../support/page_object/homePage";
 
 describe("Home Page basic Testing", () => {
   beforeEach("open a website and login to account", () => {
-    //open home page ann check if section home is active
+    //open home page and check if section home is active
     cy.openHomePage();
     onHomePage.checkHomeSectionActiveSubnav();
   });

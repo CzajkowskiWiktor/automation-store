@@ -238,6 +238,153 @@ export class HomePage {
         }
       });
   }
+
+  checkHomePageText(textMsg) {
+    cy.get(".welcome_msg")
+      .find("h4")
+      .then(($text) => {
+        const text = $text.text().replaceAll("\n", "");
+        expect(text).to.equal(textMsg);
+      });
+  }
+
+  verifyExistenceOfPromoInformationSection() {
+    cy.get("section.promo_section").should("be.visible");
+  }
+
+  verifyIconAndTextOfPromoSectionElement() {
+    const classArr = ["fa-truck", "fa-money", "fa-clock-o", "fa-tags"];
+    const textArr = [
+      "Fast shipping",
+      "Easy Payments",
+      "Shipping Options",
+      "Large Variety",
+    ];
+    cy.get("section.promo_section").children("div").should("have.length", 4);
+    cy.get("section.promo_section")
+      .children("div")
+      .each(($el, index) => {
+        //check icon
+        cy.wrap($el)
+          .find(".promo_icon")
+          .find("i")
+          .should("have.class", classArr[index]);
+        //check text
+        const promoText = $el.find(".promo_text").find("h2").text().trim();
+        expect(promoText).to.equal(textArr[index]);
+      });
+  }
+
+  checkAboutUsFooterHeader(text) {
+    cy.get("#block_frame_html_block_1775").find("h2").should("have.text", text);
+  }
+
+  checkAboutUsFooterText(text) {
+    cy.get("#block_frame_html_block_1775")
+      .find("p")
+      .then(($text) => {
+        const textFooter = $text.text().trim();
+        expect(textFooter).to.equal(text);
+      });
+  }
+
+  checkContactUsFooterHeader(text) {
+    cy.get("#block_frame_html_block_1776").find("h2").should("have.text", text);
+  }
+
+  checkContactUsFooterText(text) {
+    cy.get("#block_frame_html_block_1776")
+      .find("ul")
+      .then(($list) => {
+        cy.wrap($list)
+          .find("li")
+          .each(($el, index) => {
+            const textFooter = $el.text().trim();
+            expect(textFooter).to.equal(text[index]);
+          });
+      });
+  }
+
+  checkTestimonialsFooterHeader(text) {
+    cy.get("#block_frame_html_block_1777").find("h2").should("have.text", text);
+  }
+
+  checkTestimonialsSidebar(text) {
+    cy.get("#testimonialsidebar")
+      .children("ol")
+      .find("li")
+      .then(($button) => {
+        cy.wrap($button).each(($btn, index) => {
+          //click each btn to slide new text
+          cy.wrap($btn)
+            .contains("a", index + 1)
+            .click();
+          //verify text on slides
+          cy.get("#testimonialsidebar")
+            .find("ul.slides")
+            .find("li.flex-active-slide")
+            .then(($text) => {
+              const slideText = $text.text().trim().replace("\n", "");
+              expect(slideText).to.contain(text[index]);
+            });
+        });
+      });
+  }
+
+  checkNewsletterFooterHeader(text) {
+    cy.get("#newslettersignup").find("h2").should("have.text", text);
+  }
+
+  checkNewsletterFooterText(text) {
+    cy.get("#newslettersignup").find(".newsletter").should("have.text", text);
+  }
+
+  signUpForNewsletterFooterInput(email) {
+    //check placeholder in input and then provide email
+    cy.get("#subscribeFrm")
+      .find('[name="email"]')
+      .invoke("attr", "placeholder")
+      .should("contain", "Subscribe to Newsletter");
+    cy.get("#subscribeFrm").find('[name="email"]').type(email);
+    //click btn
+    cy.get("#subscribeFrm").find('[type="submit"]').click();
+  }
+
+  checkBrandscrollingListLength() {
+    cy.get("#block_frame_listing_block_1774")
+      .find(".maintext")
+      .should("have.text", "Brands Scrolling List");
+    cy.get("#block_frame_listing_block_1774")
+      .find("#brandcarousal > li")
+      .should("have.length", 10);
+  }
+
+  checkBrandscrollingListBrandsNames(brands) {
+    cy.get("#block_frame_listing_block_1774")
+      .find("#brandcarousal > li")
+      .find("div.image")
+      .find("img")
+      .each(($element, index) => {
+        cy.wrap($element)
+          .should("have.attr", "alt")
+          .then(($brandName) => {
+            cy.wrap($brandName).should("be.equal", brands.names[index]);
+          });
+      });
+  }
+
+  checkIfUserisNotLoggedIn(){
+    cy.get("#customer_menu_top > li").should('have.text', 'Login or register');
+    //dropdown should not exists
+    cy.get("#customer_menu_top").find('li.dropdown').should('not.exist');
+  }
+
+  checkIfCartIsEqualToZeroByDefault(){
+    //check if there is 0 value in cart topnavbar
+    cy.get('.topcart span.label').should('have.text', '0');
+    //check if there is empty cart in dropdown list cart
+    cy.get('.topcart .topcartopen #top_cart_product_list > div').should('have.class', 'empty_cart')
+  }
 }
 
 export const onHomePage = new HomePage();

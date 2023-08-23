@@ -27,17 +27,46 @@ export class WishList {
   }
 
   checkItemNames(names) {
-    cy.get(".contentpanel")
+    // cy.get(".contentpanel")
+    //   .find("table")
+    //   .find("tbody")
+    //   .find("tr:not(:first-child)")
+    //   .each(($el, index) => {
+    //     let itemName = $el.find("td").eq(1).text();
+    //     if (names.includes(itemName.trim())) {
+    //       let indexName = names.indexOf(itemName.trim());
+    //       expect(itemName).to.contain(names[indexName]);
+    //     }
+    //   });
+
+      cy.get(".contentpanel")
       .find("table")
       .find("tbody")
       .find("tr:not(:first-child)")
-      .each(($el, index) => {
-        let itemName = $el.find("td").eq(1).text();
-        if (names.includes(itemName.trim())) {
-          let indexName = names.indexOf(itemName.trim());
-          expect(itemName).to.contain(names[indexName]);
+      .then($el => {
+        //get element length
+        const elCount = Cypress.$($el).length;
+        if(elCount > 1){
+          cy.wrap($el).each(($element, index) => {
+            let itemName = $element.find("td").eq(1).text().trim();
+            if (names.includes(itemName)) {
+              if(Array.isArray(names)){
+                let indexName = names.indexOf(itemName);
+                expect(itemName).to.contain(names[indexName]);
+              } else {
+                expect(itemName).to.equal(names);
+              }
+              
+            }
+          })
+        } else {
+          let itemName = $el.find("td").eq(1).text().trim();
+          if (names.includes(itemName.trim())) {
+            // let indexName = names.indexOf(itemName);
+            expect(itemName).to.equal(names);
+          }
         }
-      });
+      })
   }
 
   checkItemPrices(prices) {

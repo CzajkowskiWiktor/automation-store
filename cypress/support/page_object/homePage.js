@@ -385,6 +385,30 @@ export class HomePage {
     //check if there is empty cart in dropdown list cart
     cy.get('.topcart .topcartopen #top_cart_product_list > div').should('have.class', 'empty_cart')
   }
+
+  checkAllCategoryAndSubcategoryOptions(categoryObj){
+    cy.get("ul.categorymenu > li").each(($listEl, index) => {
+      const categoryTitle = $listEl.children('a').text().trim();
+      //check category titles
+      expect(categoryTitle).to.equal(categoryObj[index].title);
+      //check subcategories - for Home there is a different path
+      if(categoryTitle === "Home"){
+        cy.wrap($listEl).find('#main_menu > li > a').each(($subCat, index2) =>{
+          let subCategories = $subCat.find('span.menu_text').text().trim();
+          expect(subCategories).to.equal(categoryObj[index].subcategories[index2])
+        })
+      } else {
+        cy.wrap($listEl).find('.subcategories').find('a').each(($subCat, index2) => {
+          let subCategories = $subCat.text().trim();
+          expect(subCategories).to.equal(categoryObj[index].subcategories[index2])
+        })
+      }
+    })
+  }
+
+  clickToCategoryPageByTitle(title){
+    cy.get("ul.categorymenu > li").contains('a', title).click();
+  }
 }
 
 export const onHomePage = new HomePage();

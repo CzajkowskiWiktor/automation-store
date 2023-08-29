@@ -57,14 +57,14 @@ export class ProductPage {
   }
 
   checkModelOfProduct(model){
-    cy.get('#description').find('ul.productinfo').find('li').eq(1).then($el => {
+    cy.get('#description').find('ul.productinfo').find('li').contains('span', 'Model:').parent('li').then($el => {
       const modelText = $el.text().trim();
       expect(modelText).to.contains(model)
     })
   }
 
   checkManufacturerOfProduct(manufacturer){
-    cy.get('#description').find('ul.productinfo').find('li').eq(2).then($el => {
+    cy.get('#description').find('ul.productinfo').find('li').contains('span', 'Manufacturer:').parent('li').then($el => {
       cy.wrap($el).find('img').invoke('attr', 'title').should('contain', manufacturer)
     })
   }
@@ -79,6 +79,12 @@ export class ProductPage {
     }
   }
 
+  changeSizeOfProduct(size){
+    if(size!=0){
+      cy.get('#product select').select(size, { force: true }).should('contain', size)
+    }
+  }
+
   changeQuantityOfProduct(quantity){
     cy.get("#product").find('#product_quantity').clear().type(quantity);
   }
@@ -89,7 +95,7 @@ export class ProductPage {
       cy.get('#product').then($el => {
         cy.get('#product_quantity').invoke('val').then(val => {
           const quantity = val;
-          cy.wait(1000);
+          cy.wait(500);
           const totalPrice = $el.find('.total-price').text().split('$')[1];
           const calculatedPrice = parseFloat(priceProduct)*parseInt(quantity);
           //check if total price displayed is equal to calculated one from data
@@ -108,7 +114,15 @@ export class ProductPage {
   }
 
   addToWishlistBtn(){
-    cy.get('a.wishlist_add').click();
+    cy.get('a.wishlist_add').then($el => {
+      //check if is visible
+      if($el.is(":visible")){
+        cy.wrap($el).click();
+      } else {
+        cy.get('a.wishlist_remove').click();
+        cy.wrap($el).click();
+      }
+    })
   }
 
   checkIfItemIsAddedToWishlist(){
@@ -121,7 +135,15 @@ export class ProductPage {
   } 
 
   deleteFromWishlist(){
-    cy.get('a.wishlist_remove').click();
+    cy.get('a.wishlist_remove').then($el => {
+      //check if is visible
+      if($el.is(":visible")){
+        cy.wrap($el).click();
+      } else {
+        cy.get('a.wishlist_add').click();
+        cy.wrap($el).click();
+      }
+    })
   }
 
   checkIfItemIsDeletedFromWishlist(){
@@ -160,6 +182,48 @@ export class ProductPage {
 
   verifyErrorMsgToAddingReview(){
     cy.get('#review').find('.alert-error').should('contain', 'Human verification has failed! Please try again.')
+  }
+
+  checkProductRating(rate){
+    cy.get('.productprice .rate > li.on').should('have.length', rate)
+  }
+
+  checkReviewDetails(review){
+    //author of review
+    cy.get('#current_reviews .content').find('b').should('have.text', review.author);
+    //date and msg
+    cy.get('#current_reviews .content').then($el => {
+      const text = $el.text().trim()
+      expect(text).to.include(review.date)
+      expect(text).to.include(review.message)
+    })
+    //check review rating
+    cy.get('#current_reviews .content').find('img').should('have.attr', 'alt').then($alttext => {
+      expect($alttext).to.equal(`${review.rating} out of 5 Stars!`)
+    })
+  }
+
+  clickRelatedProductsTab(){
+    cy.get('#myTab').find('a[href="#relatedproducts"]').click();
+  }
+
+  clickTagsTab(){
+    cy.get('#myTab').find('a[href="#producttag"]').click();
+  }
+
+  checkRelatedProductItem(product){
+    cy.get('#relatedproducts').find('li').then($prodEl => {
+      //check img alt text
+      cy.wrap($prodEl).find('img').should('have.attr', 'alt').then($alttext => {
+        expect($alttext).to.equal(product.imgAlt)
+      })
+      //product name
+      const prodName = $prodEl.find('.productname').text().trim();
+      expect(prodName).to.equal(product.name);
+      //product price
+      const prodPrice = $prodEl.find('.oneprice').text().trim();
+      expect(prodPrice).to.equal(product.price);
+    })
   }
 }
 

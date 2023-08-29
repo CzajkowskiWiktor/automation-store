@@ -1,5 +1,19 @@
 /// <reference types="Cypress" />
 
+function checkSectionTitle(section, name){
+  cy.get(`#${section}`).find('.maintext').should('have.text', name);
+}
+
+function checkSectionProductsLength(section){
+  cy.get(`#${section}`).find('.thumbnails > div').should('have.length', 4);
+}
+
+function checkSectionAllProductsNames(section, productNames){
+  cy.get(`#${section}`).find('.thumbnails > div').each(($el, index) => {
+    cy.wrap($el).find('.prdocutname').should('have.text', productNames[index]);
+  })
+}
+
 export class HomePage {
   loginOrRegister() {
     cy.get("#customer_menu_top").click();
@@ -373,42 +387,138 @@ export class HomePage {
       });
   }
 
-  checkIfUserisNotLoggedIn(){
-    cy.get("#customer_menu_top > li").should('have.text', 'Login or register');
+  checkIfUserisNotLoggedIn() {
+    cy.get("#customer_menu_top > li").should("have.text", "Login or register");
     //dropdown should not exists
-    cy.get("#customer_menu_top").find('li.dropdown').should('not.exist');
+    cy.get("#customer_menu_top").find("li.dropdown").should("not.exist");
   }
 
-  checkIfCartIsEqualToZeroByDefault(){
+  checkIfCartIsEqualToZeroByDefault() {
     //check if there is 0 value in cart topnavbar
-    cy.get('.topcart span.label').should('have.text', '0');
+    cy.get(".topcart span.label").should("have.text", "0");
     //check if there is empty cart in dropdown list cart
-    cy.get('.topcart .topcartopen #top_cart_product_list > div').should('have.class', 'empty_cart')
+    cy.get(".topcart .topcartopen #top_cart_product_list > div").should(
+      "have.class",
+      "empty_cart"
+    );
   }
 
-  checkAllCategoryAndSubcategoryOptions(categoryObj){
+  checkAllCategoryAndSubcategoryOptions(categoryObj) {
     cy.get("ul.categorymenu > li").each(($listEl, index) => {
-      const categoryTitle = $listEl.children('a').text().trim();
+      const categoryTitle = $listEl.children("a").text().trim();
       //check category titles
       expect(categoryTitle).to.equal(categoryObj[index].title);
       //check subcategories - for Home there is a different path
-      if(categoryTitle === "Home"){
-        cy.wrap($listEl).find('#main_menu > li > a').each(($subCat, index2) =>{
-          let subCategories = $subCat.find('span.menu_text').text().trim();
-          expect(subCategories).to.equal(categoryObj[index].subcategories[index2])
-        })
+      if (categoryTitle === "Home") {
+        cy.wrap($listEl)
+          .find("#main_menu > li > a")
+          .each(($subCat, index2) => {
+            let subCategories = $subCat.find("span.menu_text").text().trim();
+            expect(subCategories).to.equal(
+              categoryObj[index].subcategories[index2]
+            );
+          });
       } else {
-        cy.wrap($listEl).find('.subcategories').find('a').each(($subCat, index2) => {
-          let subCategories = $subCat.text().trim();
-          expect(subCategories).to.equal(categoryObj[index].subcategories[index2])
-        })
+        cy.wrap($listEl)
+          .find(".subcategories")
+          .find("a")
+          .each(($subCat, index2) => {
+            let subCategories = $subCat.text().trim();
+            expect(subCategories).to.equal(
+              categoryObj[index].subcategories[index2]
+            );
+          });
       }
-    })
+    });
   }
 
-  clickToCategoryPageByTitle(title){
-    cy.get("ul.categorymenu > li").contains('a', title).click();
+  clickToCategoryPageByTitle(title) {
+    cy.get("ul.categorymenu > li").contains("a", title).click();
   }
+
+  clickSearchKeywordField() {
+    cy.get("#filter_keyword").click();
+  }
+
+  typeSearchKeywordWord(productName) {
+    cy.get("#filter_keyword").type(productName);
+  }
+
+  clickGoSearchKieywordBtn() {
+    cy.get('[title="Go"]').click();
+  }
+
+  checkActiveCategorySelected(category) {
+    cy.get("#search-category")
+      .find(".active")
+      .find("#category_selected")
+      .should("have.text", category);
+  }
+
+  changeCategorySearchKeywordDropdown(categoryName) {
+    cy.get("#search-category")
+      .find(".search-category")
+      .contains("a", categoryName)
+      .click();
+  }
+
+  clickSpecificBrandScrollingName(brand) {
+    //click element by alt name
+    cy.get("#block_frame_listing_block_1774")
+      .find("#brandcarousal > li")
+      .find("div.image")
+      .find('img[alt = "' + brand + '"]')
+      .click();
+  }
+
+  checkFeaturedProductsTitle(){
+    checkSectionTitle('featured', "Featured");
+  }
+
+  checkFeaturedProductsLength(){
+    checkSectionProductsLength('featured')
+  }
+
+  checkAllFeaturedProducts(productNames){
+    checkSectionAllProductsNames('featured', productNames);
+  }
+
+  checkLatestProductsTitle(){
+    checkSectionTitle('latest', "Latest Products")
+  }
+
+  checkLatestProductsLength(){
+    checkSectionProductsLength('latest')
+  }
+
+  checkAllLatestsProducts(productNames){
+    checkSectionAllProductsNames('latest', productNames);
+  }
+
+  checkBestsellersTitle(){
+    checkSectionTitle('bestseller', "Bestsellers")
+  }
+
+  checkBestsellersLength(){
+    checkSectionProductsLength('bestseller')
+  }
+
+  checkAllBestsellersProducts(productNames){
+    checkSectionAllProductsNames('bestseller', productNames);
+  }
+
+  checkSpecialsTitle(){
+    checkSectionTitle('special', "Specials")
+  }
+
+  checkSpecialsLength(){
+    checkSectionProductsLength('special')
+  }
+
+  checkAllSpecialsProducts(productNames){
+    checkSectionAllProductsNames('special', productNames);
+  }
+  
 }
 
 export const onHomePage = new HomePage();

@@ -31,7 +31,7 @@ export class CartPage {
         if (rowCount !== 1) {
           cy.wrap($el).each(($element, index) => {
             //check if productQuantity is an Array
-            if(Array.isArray(productQuantity)){
+            if (Array.isArray(productQuantity)) {
               let price = productPrice[index].split("$")[1];
               //claculate total price
               let totalPrice = productQuantity[index] * Number(price);
@@ -67,7 +67,7 @@ export class CartPage {
                 .find("td")
                 .eq(4)
                 .find('input[type="text"]')
-                .should("have.value", productQuantity); 
+                .should("have.value", productQuantity);
               //check product price
               cy.wrap($element)
                 .find("td")
@@ -78,24 +78,96 @@ export class CartPage {
             }
           });
         } else {
-          let price = productPrice.split("$")[1];
-          let totalPrice = productQuantity * Number(price);
-          cy.wrap($el).then(($row) => {
-            //check product name
-            cy.wrap($row).find("td").eq(1).should("contain", productName);
-            //check product quantity
-            cy.wrap($row)
-              .find("td")
-              .eq(4)
-              .find('input[type="text"]')
-              .should("have.value", productQuantity);
-            //check product price
-            cy.wrap($row).find("td").eq(3).should("contain", productPrice);
-            //check product total price
-            cy.wrap($row).find("td").eq(5).should("contain", totalPrice);
-          });
+          if (productPrice.includes("$")) {
+            let price = productPrice.split("$")[1];
+            let totalPrice = productQuantity * Number(price);
+            cy.wrap($el).then(($row) => {
+              //check product name
+              cy.wrap($row).find("td").eq(1).should("contain", productName);
+              //check product quantity
+              cy.wrap($row)
+                .find("td")
+                .eq(4)
+                .find('input[type="text"]')
+                .should("have.value", productQuantity);
+              //check product price
+              cy.wrap($row).find("td").eq(3).should("contain", productPrice);
+              //check product total price
+              cy.wrap($row).find("td").eq(5).should("contain", totalPrice);
+            });
+          } else if (productPrice.includes("£")) {
+            let price = productPrice.split("£")[1];
+            let totalPrice = productQuantity * Number(price);
+            cy.wrap($el).then(($row) => {
+              //check product name
+              cy.wrap($row).find("td").eq(1).should("contain", productName);
+              //check product quantity
+              cy.wrap($row)
+                .find("td")
+                .eq(4)
+                .find('input[type="text"]')
+                .should("have.value", productQuantity);
+              //check product price
+              cy.wrap($row).find("td").eq(3).should("contain", productPrice);
+              //check product total price
+              cy.wrap($row).find("td").eq(5).should("contain", totalPrice);
+            });
+          } else {
+            let price = productPrice.split("$")[1];
+            let totalPrice = productQuantity * Number(price);
+            cy.wrap($el).then(($row) => {
+              //check product name
+              cy.wrap($row).find("td").eq(1).should("contain", productName);
+              //check product quantity
+              cy.wrap($row)
+                .find("td")
+                .eq(4)
+                .find('input[type="text"]')
+                .should("have.value", productQuantity);
+              //check product price
+              cy.wrap($row).find("td").eq(3).should("contain", productPrice);
+              //check product total price
+              cy.wrap($row).find("td").eq(5).should("contain", totalPrice);
+            });
+          }
         }
       });
+  }
+
+  emptyCartList() {
+    //if table exists delete products from cart
+    cy.get("body").then($body => {
+      if ($body.find(".contentpanel table").length > 0) {   
+        //get table rows length
+        cy.get(".contentpanel table")
+        .first()
+        .find("tr:not(:first-child)")
+        .then(($el) => {
+          const rowCount = Cypress.$($el).length;
+          if (rowCount !== 1) {
+            cy.wrap($el)
+              .find("a.btn")
+              .find("i")
+              .each(($element, index) => {
+                //find proper item and remove it from cart
+                cy.wrap($element).click()
+              });
+          } else {
+            cy.wrap($el).then(($row) => {
+              //press remove btn
+              cy.wrap($row)
+                .find("td")
+                .eq(6)
+                .find("a.btn")
+                .find("i")
+                .should("have.class", "fa-trash-o")
+                .click();
+            });
+          }
+        });
+      }
+    });
+    
   }
 
   deleteProductByName(itemName) {
@@ -324,23 +396,28 @@ export class CartPage {
       .then(($el) => {
         const rowCount = Cypress.$($el).length;
         if (rowCount !== 1) {
-          let totalValue=0;
-            cy.wrap($el).each(($element, index, array) => {
-                const totalPriceCart = $element.find('td').eq(5).text().split('$')[1].trim();
-                totalValue += parseFloat(totalPriceCart)
-                //on last iteration verify total value
-                if(index === array.length - 1){
-                    cy.log(totalValue.toFixed(2))
-                    cy.get(".contentpanel table")
-                      .eq(3)
-                      .find("tr")
-                      .first()
-                      .find("td")
-                      .eq(1)
-                      .find("span.bold")
-                      .should("contain", totalValue.toFixed(2));
-                }
-            })
+          let totalValue = 0;
+          cy.wrap($el).each(($element, index, array) => {
+            const totalPriceCart = $element
+              .find("td")
+              .eq(5)
+              .text()
+              .split("$")[1]
+              .trim();
+            totalValue += parseFloat(totalPriceCart);
+            //on last iteration verify total value
+            if (index === array.length - 1) {
+              cy.log(totalValue.toFixed(2));
+              cy.get(".contentpanel table")
+                .eq(3)
+                .find("tr")
+                .first()
+                .find("td")
+                .eq(1)
+                .find("span.bold")
+                .should("contain", totalValue.toFixed(2));
+            }
+          });
         } else {
           cy.wrap($el).then(($row) => {
             const totalPrice = $row.find("td").eq(5).text();
@@ -377,25 +454,53 @@ export class CartPage {
       .eq(3)
       .find("tr")
       .then(($el) => {
-        const subTotal = $el.first().find("td").eq(1).find("span.bold").text().split('$')[1].trim();
-        const shipRate = $el.eq(1).find("td").eq(1).find("span.bold").text().split('$')[1].trim();
-        const totalValue = $el.eq(2).find("td").eq(1).find("span.totalamout").text().split('$')[1].trim();
+        const subTotal = $el
+          .first()
+          .find("td")
+          .eq(1)
+          .find("span.bold")
+          .text()
+          .split("$")[1]
+          .trim();
+        const shipRate = $el
+          .eq(1)
+          .find("td")
+          .eq(1)
+          .find("span.bold")
+          .text()
+          .split("$")[1]
+          .trim();
+        const totalValue = $el
+          .eq(2)
+          .find("td")
+          .eq(1)
+          .find("span.totalamout")
+          .text()
+          .split("$")[1]
+          .trim();
 
         //add subtotal and ship rate
-        const addedSubAndRateValue = parseFloat(subTotal)+parseFloat(shipRate);
+        const addedSubAndRateValue =
+          parseFloat(subTotal) + parseFloat(shipRate);
         //compare totals
         expect(totalValue).to.equal(addedSubAndRateValue.toFixed(2));
       });
   }
 
-  clickContinueShoppingBtn(){
-    cy.get(".cart_total").find('a[href="https://automationteststore.com/"]').click()
+  clickContinueShoppingBtn() {
+    cy.get(".cart_total")
+      .find('a[href="https://automationteststore.com/"]')
+      .click();
   }
 
-  changeCurrencyTo(currencySymbol){
+  changeCurrencyTo(currencySymbol) {
     //verify to which currency symbol it must be changed
-    cy.get('.headerdetails').find('.language').trigger("mouseover");
-    cy.get('li.open').contains('a', currencySymbol).click();
+    cy.get(".headerdetails").find(".language").trigger("mouseover");
+    cy.get("li.open").contains("a", currencySymbol).click();
+  }
+
+  goToHomePage() {
+    cy.get(".categorymenu > li").find("a.menu_home").click();
   }
 }
 

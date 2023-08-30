@@ -16,6 +16,28 @@ function checkErrorMessages(className, msg) {
   }
 }
 
+function getRandomEmail(domain,length)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text + domain;
+}
+
+function getRandomLogin(length)
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 export class RegisterPage {
   verifyRegisterPageTitle() {
     //check create an account site
@@ -27,14 +49,14 @@ export class RegisterPage {
   fillRegisterForm(
     firstname,
     lastname,
-    email,
+    email="",
     telephone,
     address1,
     city,
     country,
     postcode,
     zone,
-    login,
+    login="",
     password,
     passwordConfirm,
     newsletter,
@@ -44,7 +66,11 @@ export class RegisterPage {
     cy.get("#AccountFrm").then((form) => {
       cy.wrap(form).find("#AccountFrm_firstname").type(firstname);
       cy.wrap(form).find("#AccountFrm_lastname").type(lastname);
-      cy.wrap(form).find("#AccountFrm_email").type(email);
+      if(email !== ""){
+        cy.wrap(form).find("#AccountFrm_email").type(email);
+      } else {
+        cy.wrap(form).find("#AccountFrm_email").type(getRandomEmail("@example.com",15));
+      }
       cy.wrap(form).find("#AccountFrm_telephone").type(telephone);
       cy.wrap(form).find("#AccountFrm_address_1").type(address1);
       cy.wrap(form).find("#AccountFrm_city").type(city);
@@ -54,7 +80,11 @@ export class RegisterPage {
       cy.wrap(form).find("#AccountFrm_zone_id").select(zone);
       //login details
       cy.wrap(form).find(".heading4").should("contain", "Login Details");
-      cy.wrap(form).find("#AccountFrm_loginname").type(login);
+      if(login !== ""){
+        cy.wrap(form).find("#AccountFrm_loginname").type(login);
+      } else {
+        cy.wrap(form).find("#AccountFrm_loginname").type(getRandomLogin(10));
+      }
       cy.wrap(form).find("#AccountFrm_password").type(password);
       cy.wrap(form).find("#AccountFrm_confirm").type(passwordConfirm);
       //subscribe to newsletter

@@ -151,11 +151,34 @@ describe("Testing on user account page", () => {
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(globalData.firstname);
     onAccountPage.checkPathContentToAccount();
-    //should be at least 2 to delete a non-default address
-    onAccountPage.getManageAddressBookAmount(2);
+    //add new address
     onAccountPage.goToAddressBookSidebar();
     onAddressPage.checkUrlAndTitlePage();
     onAddressPage.checkSelectedOptionInSidebarlist();
+    onAddressPage.checkPathContentToAddressBook();
+    onAddressPage.verifyAddressInformation(
+      globalData.firstname,
+      globalData.lastname,
+      globalData.address1,
+      globalData.city,
+      globalData.postcode,
+      globalData.zone,
+      globalData.country
+    );
+    onAddressPage.clickAddNewAddressBtn();
+    onAddNewAddressPage.checkUrlAndTitlePage();
+    onAddNewAddressPage.checkPathContentToAddressBook();
+    //add new address to user account
+    onAddNewAddressPage.addNewAddress(newAddressUser);
+    onAddNewAddressPage.clickContinueBtnToAddNewAddress();
+    onAddressPage.verifySuccessMessage(
+      "Your address has been successfully inserted"
+    );
+    // //should be at least 2 to delete a non-default address
+    // onAccountPage.getManageAddressBookAmount(2);
+    // onAccountPage.goToAddressBookSidebar();
+    // onAddressPage.checkUrlAndTitlePage();
+    // onAddressPage.checkSelectedOptionInSidebarlist();
     //verify new address
     onAddressPage.verifyNewAddressInformation(newAddressUser);
     onAddressPage.clickEditAddressBookData(1);
@@ -652,7 +675,7 @@ describe("Testing on user account page", () => {
     );
   });
 
-  it.only("check account details", () => {
+  it("check account details", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();

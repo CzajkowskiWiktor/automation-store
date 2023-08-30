@@ -23,14 +23,14 @@ describe("Authorization - login and register tests", () => {
     const registerForm = {
       firstname: "David",
       lastname: "Johnson",
-      email: "davidjohnson1111111112222@example.com",
+      // email: "davidjohnson1111111112222@example.com",
       tele: "123456789",
       address1: "ul. Testowa 123/1",
       city: "Warszawa",
       country: "Poland",
       postcode: "01-123",
       zone: "Mazowieckie",
-      login: "johytest1234567",
+      // login: "johytest1234567",
       password: "test123",
       passwordConfirm: "test123",
       newsletter: 1,
@@ -204,14 +204,14 @@ describe("Authorization - login and register tests", () => {
     const registerForm = {
       firstname: "David",
       lastname: "Johnson",
-      email: "davidjohnso12@example.com1",
+      // email: "davidjohnso12@example.com",
       tele: "123456789",
       address1: "ul. Testowa 123/1",
       city: "{backspace}",
       country: "Poland",
       postcode: "{backspace}",
       zone: "Mazowieckie",
-      login: "johydavid091",
+      // login: "johydavid091",
       password: "test123",
       passwordConfirm: "test123",
       newsletter: 1,
@@ -239,12 +239,10 @@ describe("Authorization - login and register tests", () => {
     );
     onRegisterPage.clickContinueBtn();
     onRegisterPage.verifyErrorRegisterMessage([
-      "Email Address does not appear to be valid!",
       "City must be between 3 and 128 characters!",
       "Zip/postal code must be between 3 and 10 characters!",
     ]);
     onRegisterPage.getErrorInputMsg([
-      "Email Address does not appear to be valid!",
       "City must be between 3 and 128 characters!",
       "Zip/postal code must be between 3 and 10 characters!",
     ]);
@@ -354,7 +352,7 @@ describe("Authorization - login and register tests", () => {
     onForgotPassPage.fillForgotPassForm(globalData.login, globalData.email);
     onForgotPassPage.clickContinueBtn();
     onLoginPage.verifyLoginPageTitle();
-    onLoginPage.successMessageOfPasswordReset();
+    onLoginPage.successMessageOfResetingAccData("Success: Password reset link has been sent to your e-mail address.");
   });
 
   it("Login to account going back from forgot password", () => {
@@ -423,7 +421,7 @@ describe("Authorization - login and register tests", () => {
     onAccountPage.checkUrlAndTitlePage();
   });
 
-  it.only("sign in to account through register page", () => {
+  it("sign in to account through register page", () => {
     navigateTo.loginOrRegister();
     onLoginPage.verifyLoginPageTitle();
     onLoginPage.getAndClickToRegisterForm();

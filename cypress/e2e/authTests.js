@@ -14,7 +14,7 @@ describe("Authorization - login and register tests", () => {
     //open home page
     cy.openHomePage();
     //assign global data
-    cy.fixture("example.json").then(function (data) {
+    cy.fixture("authAcc.json").then(function (data) {
       globalData = data;
     });
   });

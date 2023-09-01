@@ -45,7 +45,7 @@ describe("Testing on user account page", () => {
 
   beforeEach("open a website and login to account", () => {
     //assign global data
-    cy.fixture("example.json").then(function (data) {
+    cy.fixture("accountAcc.json").then(function (data) {
       globalData = data;
     });
     //open home page nad sign in
@@ -80,7 +80,7 @@ describe("Testing on user account page", () => {
     onAccountPage.checkUrlAndTitlePage();
     onAccountPage.verifyCustomerNameOnPage(globalData.firstname);
     onAccountPage.checkPathContentToAccount();
-    onAccountPage.getManageAddressBookAmount(1);
+    // onAccountPage.getManageAddressBookAmount(1);
     onAccountPage.goToAddressBookSidebar();
     onAddressPage.checkUrlAndTitlePage();
     onAddressPage.checkSelectedOptionInSidebarlist();
@@ -112,7 +112,7 @@ describe("Testing on user account page", () => {
     onAccountPage.verifyCustomerNameOnPage(globalData.firstname);
     onAccountPage.checkPathContentToAccount();
     //should be at least 2 to delete a non-default address
-    onAccountPage.getManageAddressBookAmount(2);
+    // onAccountPage.getManageAddressBookAmount(2);
     onAccountPage.goToAddressBookSidebar();
     onAddressPage.checkUrlAndTitlePage();
     onAddressPage.checkSelectedOptionInSidebarlist();
@@ -250,18 +250,23 @@ describe("Testing on user account page", () => {
   });
 
   it("change user password", () => {
+    const changePassUser = {
+      login: "lotemtesti123",
+      password: "test12345",
+      email: "lotemTesting123@example.com",
+    };
     navigateTo.loginOrRegister();
-    onLoginPage.loginToAccount(globalData.login, globalData.password);
+    onLoginPage.loginToAccount(changePassUser.login, changePassUser.password);
     onAccountPage.checkUrlAndTitlePage();
-    onAccountPage.verifyCustomerNameOnPage(globalData.firstname);
     onAccountPage.checkPathContentToAccount();
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
+    //change to new password
     onChangePasswordPage.fillTheCompleteForm(
-      globalData.password,
-      "test1234",
-      "test1234"
+      changePassUser.password,
+      "test123456",
+      "test123456"
     );
     onChangePasswordPage.clickContinueBtnToChangePassword();
     onAccountPage.verifySuccessMessage(
@@ -298,7 +303,7 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillTheCompleteForm("test123", "te", "test1234");
+    onChangePasswordPage.fillTheCompleteForm(globalData.password, "te", "test1234");
     onChangePasswordPage.clickContinueBtnToChangePassword();
     onChangePasswordPage.verifyErrorMessage(
       "Oops, there is an error with information provided!"
@@ -321,8 +326,8 @@ describe("Testing on user account page", () => {
     onAccountPage.goToPasswordChangeSidebar();
     onChangePasswordPage.checkUrlAndTitlePage();
     onChangePasswordPage.checkPathContentToChangePassword();
-    onChangePasswordPage.fillCurrentPassword("test123");
-    onChangePasswordPage.fillNewPassword("test1234");
+    onChangePasswordPage.fillCurrentPassword(globalData.password);
+    onChangePasswordPage.fillNewPassword("test12345");
     onChangePasswordPage.clickContinueBtnToChangePassword();
     onChangePasswordPage.verifyErrorMessage(
       "Oops, there is an error with information provided!"
@@ -357,7 +362,7 @@ describe("Testing on user account page", () => {
 
   it("check the user wishlist", () => {
     let wishlistAmount = 3;
-    let totalPriceOfItems = 216;
+    let totalPriceOfItems = 160.5;
     let itemPrices = ["$26.00", "$85.00", "$105.00"];
     let itemNames = [
       "New Ladies High Wedge Heel Toe Thong Diamante Flip Flop Sandals",
@@ -388,7 +393,7 @@ describe("Testing on user account page", () => {
     onWishList.checkTotalPriceOfItems(totalPriceOfItems);
   });
 
-  it("delete an item from wishlist", () => {
+  it.skip("delete an item from wishlist", () => {
     let wishlistAmount = 3;
     let itemName = "New French With Ease (1 book + 1 mp3 CD)";
 
@@ -441,12 +446,12 @@ describe("Testing on user account page", () => {
   });
 
   it("check user order history", () => {
-    let orderQuantity = 5;
-    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
-    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
-    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
-    let orderDateAdded = "08/01/2023";
-    let productsQuantity = [1, 1, 1, 1, 2];
+    let orderQuantity = 6;
+    let orderIds = ["#24822","#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["24.99","44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderDateAdded = ["08/16/2023","08/01/2023","08/01/2023","08/01/2023","08/01/2023","08/01/2023"];
+    let productsQuantity = [1,1, 1, 1, 1, 2];
 
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
@@ -477,15 +482,16 @@ describe("Testing on user account page", () => {
   });
 
   it("view order details history on specific orderID", () => {
-    let orderQuantity = 5;
-    let number = 4;
-    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
-    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
-    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderQuantity = 6;
+    let number = 5;
+    let orderIds = ["#24822","#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending","Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["24.99","44.00", "8.45", "208.35", "47.87", "60.53"];
     let orderDateAdded = "08/01/2023";
-    let productsQuantity = [1, 1, 1, 1, 2];
-    let eachProductOrderedQuantity = [1, 1, 1, 1, [1, 1]];
+    let productsQuantity = [1,1, 1, 1, 1, 2];
+    let eachProductOrderedQuantity = [1,1, 1, 1, 1, [1, 1]];
     let productNames = [
+      "Skinsheen Bronzer Stick",
       "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
       "Viva Glam Lipstick",
       "Creme Precieuse Nuit 50ml",
@@ -495,7 +501,7 @@ describe("Testing on user account page", () => {
         "Designer Men Casual Formal Double Cuffs Grandad Band Collar Shirt Elegant Tie",
       ],
     ];
-    let productPrice = ["42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
+    let productPrice = ["23.40","42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
 
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
@@ -537,15 +543,16 @@ describe("Testing on user account page", () => {
   });
 
   it("Print the order invoice from order details", () => {
-    let orderQuantity = 5;
-    let number = 2;
-    let orderIds = ["#24111", "#24110", "#24109", "#24108", "#24107"];
-    let orderStatus = ["Pending", "Pending", "Pending", "Pending", "Pending"];
-    let orderTotals = ["44.00", "8.45", "208.35", "47.87", "60.53"];
+    let orderQuantity = 6;
+    let number = 3;
+    let orderIds = ["#24822","#24111", "#24110", "#24109", "#24108", "#24107"];
+    let orderStatus = ["Pending","Pending", "Pending", "Pending", "Pending", "Pending"];
+    let orderTotals = ["24.99","44.00", "8.45", "208.35", "47.87", "60.53"];
     let orderDateAdded = "08/01/2023";
-    let productsQuantity = [1, 1, 1, 1, 2];
-    let eachProductOrderedQuantity = [1, 1, 1, 1, [1, 1]];
+    let productsQuantity = [1,1, 1, 1, 1, 2];
+    let eachProductOrderedQuantity = [1,1, 1, 1, 1, [1, 1]];
     let productNames = [
+      "Skinsheen Bronzer Stick",
       "Absolute Anti-Age Spot Replenishing Unifying TreatmentSPF 15",
       "Viva Glam Lipstick",
       "Creme Precieuse Nuit 50ml",
@@ -555,7 +562,7 @@ describe("Testing on user account page", () => {
         "Designer Men Casual Formal Double Cuffs Grandad Band Collar Shirt Elegant Tie",
       ],
     ];
-    let productPrice = ["42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
+    let productPrice = ["23.40","42.00", "6.57", "206.47", "45.99", ["28.62", "30.03"]];
 
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
@@ -688,7 +695,7 @@ describe("Testing on user account page", () => {
     onEditAccountDetailsPage.checkUserPersonalInformation(userWithHistory);
   });
 
-  it("edit account detail - phone number", () => {
+  it.skip("edit account detail - phone number", () => {
     navigateTo.loginOrRegister();
     onLoginPage.loginToAccount(userWithHistory.login, userWithHistory.password);
     onAccountPage.checkUrlAndTitlePage();

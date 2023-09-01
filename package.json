@@ -4,7 +4,14 @@
   "description": "automation test store testing with cypress",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "triggerAllTests-headless": "npx cypress run --headless",
+    "triggerAllTests-chrome-headed": "npx cypress run --browser chrome --headed",
+    "triggerrAllTests-dashboard": "npx cypress run --record --key 74412f26-1225-473c-979e-25d6e52efe25",
+    "triggerHomePageTests": "npx cypress run --spec cypress/e2e/homePageTests.js",
+    "triggerAuthTests": "npx cypress run --spec cypress/e2e/authTests.js",
+    "triggerAccountTests": "npx cypress run --spec cypress/e2e/accountTests.js",
+    "triggerProductTests": "npx cypress run --spec cypress/e2e/productTests.js",
+    "triggerShoppingTests": "npx cypress run --spec cypress/e2e/shoppingTests-*.js"
   },
   "author": "czajkowski witkor",
   "license": "ISC",

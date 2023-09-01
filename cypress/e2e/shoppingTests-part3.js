@@ -27,7 +27,7 @@ describe("Testing shopping funcionality", () => {
 
   beforeEach("open a website and login to account", () => {
     //assign global data
-    cy.fixture("example.json").then(function (data) {
+    cy.fixture("shoppingAcc.json").then(function (data) {
       globalData = data;
     });
     //open home page nad sign in

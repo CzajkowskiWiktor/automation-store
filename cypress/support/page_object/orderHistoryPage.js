@@ -90,7 +90,7 @@ export class OrderHistoryPage {
         .contains("td", "Date Added:")
         .then(($date) => {
           const dateText = $date.text().split(":")[1].trim();
-          expect(dateText).to.include(orderDates);
+          expect(dateText).to.include(orderDates[index]);
         });
     });
   }

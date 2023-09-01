@@ -33,7 +33,7 @@ describe("Testing products functionality", () => {
 
   beforeEach("open a website and login to account", () => {
     //assign global data
-    cy.fixture("example.json").then(function (data) {
+    cy.fixture("productAcc.json").then(function (data) {
       globalData = data;
     });
     //open home page and check if section home is active

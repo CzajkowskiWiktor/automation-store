@@ -1,0 +1,13 @@
+{
+  "login": "johytest123456789",
+  "password": "test1234",
+  "email": "davidjohnson111111111222233@example.com",
+  "firstname": "David",
+  "lastname": "Johnson",
+  "tele": "123456789",
+  "address1": "ul. Testowa 123/1",
+  "city": "Warszawa",
+  "country": "Poland",
+  "postcode": "01-123",
+  "zone": "Mazowieckie"
+}

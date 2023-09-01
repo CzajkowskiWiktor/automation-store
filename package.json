@@ -11,7 +11,12 @@
     "triggerAuthTests": "npx cypress run --spec cypress/e2e/authTests.js",
     "triggerAccountTests": "npx cypress run --spec cypress/e2e/accountTests.js",
     "triggerProductTests": "npx cypress run --spec cypress/e2e/productTests.js",
-    "triggerShoppingTests": "npx cypress run --spec cypress/e2e/shoppingTests-*.js"
+    "triggerShoppingTests": "npx cypress run --spec cypress/e2e/shoppingTests-*.js",
+    "triggerHomePageTests-dashboard": "npx cypress run --spec cypress/e2e/homePageTests.js --record --key 74412f26-1225-473c-979e-25d6e52efe25",
+    "triggerAuthTests-dashboard": "npx cypress run --spec cypress/e2e/authTests.js --record --key 74412f26-1225-473c-979e-25d6e52efe25",
+    "triggerAccountTests-dashboard": "npx cypress run --spec cypress/e2e/accountTests.js --record --key 74412f26-1225-473c-979e-25d6e52efe25",
+    "triggerProductTests-dashboard": "npx cypress run --spec cypress/e2e/productTests.js --record --key 74412f26-1225-473c-979e-25d6e52efe25",
+    "triggerShoppingTests-dashboard": "npx cypress run --spec cypress/e2e/shoppingTests-*.js --record --key 74412f26-1225-473c-979e-25d6e52efe25"
   },
   "author": "czajkowski witkor",
   "license": "ISC",
